@@ -12,7 +12,7 @@
     // simple usage
     Event.observe(window, 'load', windowLoaded.bind(this));
     function windowLoaded (e) {
-      this.basicExample = new SlideShow('basicExample');
+      this.basicExample = new SlideShow('basicExample', { slideDuration: 10 });
     }
   </script>
   <style type="text/css" media="screen">
@@ -56,9 +56,9 @@
 <h1>Basic Demo</h1>
 
 <ul id="basicExample">
-  <li><img src="http://farm2.static.flickr.com/1151/1298349222_5369d5fef3.jpg?v=0" /></li>
-  <li><img src="http://farm2.static.flickr.com/1151/1298349222_5369d5fef3.jpg?v=0" /></li>
-  <li><img src="http://farm2.static.flickr.com/1151/1298349222_5369d5fef3.jpg?v=0" /></li>
+  <li><img src="http://farm2.static.flickr.com/1151/1298349222_5369d5fef3.jpg?v=0" alt="mouse" /></li>
+  <li><img src="http://farm2.static.flickr.com/1313/1298996325_1b6410e520.jpg?v=0" alt="yellow bird" /></li>
+  <li><img src="http://farm2.static.flickr.com/1313/1298996325_1b6410e520.jpg?v=0" alt="line bird" /></li>
 </ul>
 
 </body>
