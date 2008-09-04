@@ -18,7 +18,7 @@ var SlideShow = Class.create({
     if (!$(element)) return;
     this.root = $(element);
     this.defaultOptions = $H({
-      autoSetup: true, autoStart: true,
+      autoStart: true,
       duration: 5,
       transition: 'fade',
       transitionDuration: 1,
@@ -27,18 +27,22 @@ var SlideShow = Class.create({
       beforeStart: function(){}, afterFinish: function(){}
     });
     this.options = this.defaultOptions.merge(options);
-    this.effectOptions = { duration: this.options.transitionDuration / 2 };
-    if (this.options.autoSetup) this.setup();
-    if (this.options.autoStart) this.start();
+    this.effectOptions = { duration: this.options.get('transitionDuration') / 2 };
+    this.slides = this.options.get('slides');
+    this.setup();
+    if (this.options.get('autoStart')) this.start();
   },
-  setup: function(){
+  prep: function(){
     this.root.makePositioned();
     this.slides
       .invoke('setStyle', { display: 'none', position: 'absolute' })
-      .each(function(slide, i){ slide.setStyle({ zIndex: i }); }.bind(this));
+      .each(function(slide, i){ slide.setStyle({ zIndex: i }); });
+    this.root.fire(this.root.identify() + '_slideshow:prepped');
   },
   start: function(){
+    console.log('start');
     this.transition();
+    this.root.fire(this.root.identify() + '_slideshow:started');
   },
   transition: function(){
     
