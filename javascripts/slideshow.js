@@ -48,38 +48,38 @@ var SlideShow = Class.create({
   },
   transition: function(){
     // get slide after visible one, or 1st one if last is visible or none are visible
-    var coming = this.slides.find(function(slide){
+    this.coming = this.slides.find(function(slide){
       if (slide.visible()) return slide.next() || this.slides.first();
     }.bind(this)) || this.slides.first();
-    console.log(coming);
-    var going = coming.previous() || this.slides.first();
+    // console.log(this.coming);
+    this.going = this.coming.previous() || this.slides.first();
     
     // if not fresh start, fade
-    if (going != coming) {
+    if (this.going != this.coming) {
       // if overlap
       if (this.options.get('overlap')) {
-        new Effect.Parallel([new Effect.Appear(coming), new Effect.Fade(going)], { duration: this.options.get('transitionDuration') });
+        new Effect.Parallel([new Effect.Appear(this.coming), new Effect.Fade(this.going)], { duration: this.options.get('transitionDuration') });
       } else {
         going.fade(this.effectOptions.merge({
           afterFinish: function(){
-            coming.appear(this.effectOptions);
+            this.coming.appear(this.effectOptions);
           }.bind(this)
         }));
       }
     }
     // fade in the first time
     else {
-      coming.appear(this.effectOptions);
+      this.coming.appear(this.effectOptions);
     }
     
     
     this.loopCount++;
-    this.fireEvent('transitioned', { slideshow: this, coming: coming, going: going });
+    this.fireEvent('transitioned', { slideshow: this, coming: this.coming, going: this.going });
   },
   fireEvent: function(name, memo){
-    console.group(name);
-    console.log(memo);
-    console.groupEnd();
+    // console.group(name);
+    // console.log(memo);
+    // console.groupEnd();
     this.root.fire(this.root.identify() + '_slideshow:' + name, memo);
   }
 });

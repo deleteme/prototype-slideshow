@@ -10,9 +10,10 @@
   <script src="../javascripts/slideshow.js" type="text/javascript" charset="utf-8"></script>
   <script type="text/javascript" charset="utf-8">
     // simple usage
-    Event.observe(window, 'load', function(){
-      var basicExample = new SlideShow('basicExample');
-    });
+    Event.observe(window, 'load', windowLoaded.bind(this));
+    function windowLoaded (e) {
+      this.basicExample = new SlideShow('basicExample');
+    }
   </script>
   <style type="text/css" media="screen">
     
