@@ -4,13 +4,12 @@
 Main SlideShow Class:
 
 * slides
-* transitions, default: fade
 * slide visibility duration, default: 5
 * transition duration, default: 1
 * loop boolean, default: true
 
 
-new SlideShow('container', { duration: 2 });
+new SlideShow('container', { slideDuration: 2 });
 
 */
 var SlideShow = Class.create({
