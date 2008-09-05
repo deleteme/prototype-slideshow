@@ -3,13 +3,9 @@
 
 Main SlideShow Class:
 
-* slides
-* slide visibility duration, default: 5
-* transition duration, default: 1
-* loop boolean, default: true
+EXAMPLE USAGE:
 
-
-new SlideShow('container', { slideDuration: 2 });
+  new SlideShow('container', { slideDuration: 2 });
 
 */
 var SlideShow = Class.create({
