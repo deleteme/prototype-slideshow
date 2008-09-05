@@ -28,6 +28,7 @@ var SlideShow = Class.create({
       beforeStart: function(){}, afterFinish: function(){}
     });
     this.loopCount = 0;
+    this.slideIndex = 0;
     this.options = this.defaultOptions.merge(options);
     this.effectOptions = { duration: this.options.get('transitionDuration') / 2 };
     this.slides = this.options.get('slides');
@@ -38,10 +39,17 @@ var SlideShow = Class.create({
   },
   prep: function(){
     this.root.makePositioned();
-    this.slides
-      .invoke('setStyle', { display: 'none', position: 'absolute', opacity: 0 })
-      .each(function(slide, i){ slide.setStyle({ zIndex: i }); });
+    
+    for (var i=0; i < this.slides.length; i++) {
+      this.prepSlide(this.slides[i]).setStyle({
+        position: 'absolute', zIndex: i
+      });
+    };
+    
     this.fireEvent('prepped', { slideshow: this });
+  },
+  prepSlide: function(slide){
+    return slide.setStyle({ display: 'none', opacity: 0 });
   },
   play: function(){
     this.paused = false;
@@ -54,54 +62,40 @@ var SlideShow = Class.create({
   transition: function(){
     if (this.paused) return;
     // get slide after visible one, or 1st one if last is visible or none are visible
-    var coming = this.slides.find(function(slide){ return slide.visible(); });
-    this.coming = (coming) ? coming.next() : this.slides.first();
+
+    this.coming = this.slides[this.slideIndex];
+    this.going = this.coming.previous() || this.slides.last();
     
-    this.going = this.coming.previous() || this.slides.first();
     // if not fresh start, fade
     if (this.going != this.coming) {
-      // this.coming.show();
       // if crossfade
       if (this.options.get('crossfade')) {
         new Effect.Parallel(
-          [new Effect.Appear(this.coming.show()), new Effect.Fade(this.going)],
+          [new Effect.Appear(this.coming), new Effect.Fade(this.going)],
           {
             duration: this.options.get('transitionDuration'),
-            afterFinish: Element.hide.curry(this.going)
+            afterFinish: this.prepSlide.curry(this.going)
           }
         );
-        console.group('transition: ' + this.loopCount);
-        console.log('coming: ' + this.coming.down().readAttribute('alt'));
-        console.log('going: ' + this.going.down().readAttribute('alt'));
-        console.groupEnd();
       } else {
-        this.going.fade(this.effectOptions.merge({
+        this.going.fade({
+          duration: this.options.get('transitionDuration') / 2,
           afterFinish: function(){
-            console.log('this.going is faded out');
-            this.going.hide();
-            this.coming.show().appear({afterFinish: function(){
-              console.log(this.coming);
-            }});
+            this.prepSlide(this.going);
+            this.coming.appear(this.effectOptions);
           }.bind(this)
-        }));
-        console.group('transition: ' + this.loopCount);
-        console.log('coming: ' + this.coming.down().readAttribute('alt'));
-        console.log('going: ' + this.going.down().readAttribute('alt'));
-        console.groupEnd();
+        });
       }
     }
     // fade in the first time
     else {
-      console.log('fade in the first time');
-      console.group('transition: ' + this.loopCount);
-      console.log('coming: ' + this.coming.down().readAttribute('alt'));
-      console.log('going: ' + this.going.down().readAttribute('alt'));
-      console.groupEnd();
-      
       this.coming.appear(this.effectOptions);
     }
     
     this.loopCount++;
+    this.slideIndex++;
+    if (this.slideIndex >= this.slides.length)
+      this.slideIndex = 0;
     this.fireEvent('transitioned', { slideshow: this, coming: this.coming, going: this.going, loopCount: this.loopCount });
     if (this.options.get('slideDuration') > 0)
       this.transition.bind(this).delay(this.options.get('slideDuration'));
