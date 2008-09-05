@@ -23,7 +23,7 @@ var SlideShow = Class.create({
       slideDuration: 5,
       transitionDuration: 1,
       loop: true,
-      overlap: false,
+      crossfade: false,
       slides: this.root.immediateDescendants(),
       beforeStart: function(){}, afterFinish: function(){}
     });
@@ -61,8 +61,8 @@ var SlideShow = Class.create({
     // if not fresh start, fade
     if (this.going != this.coming) {
       // this.coming.show();
-      // if overlap
-      if (this.options.get('overlap')) {
+      // if crossfade
+      if (this.options.get('crossfade')) {
         new Effect.Parallel(
           [new Effect.Appear(this.coming.show()), new Effect.Fade(this.going)],
           {
