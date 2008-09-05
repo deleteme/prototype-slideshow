@@ -25,6 +25,7 @@ var SlideShow = Class.create({
       loop: true,
       crossfade: false,
       slides: this.root.immediateDescendants(),
+      pauseOnMouseover: true,
       beforeStart: function(){}, afterFinish: function(){}
     });
     this.loopCount = 0;
@@ -46,6 +47,10 @@ var SlideShow = Class.create({
       });
     };
     
+    if (this.options.get('pauseOnMouseover')){
+      this.root.observe('mouseover', this.pauseOnMouseover.bind(this)).observe('mouseout', this.resumeOnMouseout.bind(this))
+    }
+    
     this.fireEvent('prepped', { slideshow: this });
   },
   prepSlide: function(slide){
@@ -58,6 +63,7 @@ var SlideShow = Class.create({
   },
   pause: function(){
     this.paused = true;
+    this.fireEvent('paused', { slideshow: this });
   },
   transition: function(){
     if (this.paused) return;
@@ -101,6 +107,15 @@ var SlideShow = Class.create({
       this.transition.bind(this).delay(this.options.get('slideDuration'));
   },
   fireEvent: function(name, memo){
+    console.log(this.root.identify() + '_slideshow:' + name);
     this.root.fire(this.root.identify() + '_slideshow:' + name, memo);
+  },
+  pauseOnMouseover: function(e){
+    if (!this.paused && !$(e.target).descendantOf(this.root))
+      this.pause();
+  },
+  resumeOnMouseout: function(e){
+    if (this.paused && !$(e.target).descendantOf(this.root))
+      this.play();
   }
 });
