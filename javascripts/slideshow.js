@@ -19,7 +19,7 @@ var SlideShow = Class.create({
       transitionDuration: 1,
       loop: true,
       crossfade: false,
-      slides: this.root.immediateDescendants(),
+      slides: this.root.childElements(),
       pauseOnMouseover: true,
       beforeStart: function(){}, afterFinish: function(){}
     });
@@ -102,15 +102,21 @@ var SlideShow = Class.create({
       this.transition.bind(this).delay(this.options.get('slideDuration'));
   },
   fireEvent: function(name, memo){
-    console.log(this.root.identify() + '_slideshow:' + name);
+    // console.log(this.root.identify() + '_slideshow:' + name);
     this.root.fire(this.root.identify() + '_slideshow:' + name, memo);
   },
   pauseOnMouseover: function(e){
-    if (!this.paused && !$(e.target).descendantOf(this.root))
+    if (!this.paused && $(e.target).descendantOf(this.root)) {
+      console.log('pauseOnMouseover');
+      console.log(e);
       this.pause();
+    }
   },
   resumeOnMouseout: function(e){
-    if (this.paused && !$(e.target).descendantOf(this.root))
+    if (this.paused && $(e.target).descendantOf(this.root)) {
+      console.log('resumeOnMouseover');
+      console.log(e);
       this.play();
+    }
   }
 });
