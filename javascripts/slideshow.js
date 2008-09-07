@@ -34,7 +34,7 @@ var SlideShow = Class.create({
     this.fireEvent('initialized', { slideshow: this });
   },
   prep: function(){
-    this.root.makePositioned();
+    this.root.makePositioned().identify();
     
     for (var i=0; i < this.slides.length; i++) {
       this.prepSlide(this.slides[i]).setStyle({
@@ -52,11 +52,13 @@ var SlideShow = Class.create({
     return slide.setStyle({ display: 'none', opacity: 0 });
   },
   play: function(){
+    console.log('PLAY');
     this.paused = false;
     this.transition();
     this.fireEvent('started', { slideshow: this });
   },
   pause: function(){
+    console.log('PAUSED');
     this.paused = true;
     this.fireEvent('paused', { slideshow: this });
   },
@@ -103,20 +105,23 @@ var SlideShow = Class.create({
   },
   fireEvent: function(name, memo){
     // console.log(this.root.identify() + '_slideshow:' + name);
-    this.root.fire(this.root.identify() + '_slideshow:' + name, memo);
+    this.root.fire(this.root.id + '_slideshow:' + name, memo);
   },
   pauseOnMouseover: function(e){
-    if (!this.paused && $(e.target).descendantOf(this.root)) {
-      console.log('pauseOnMouseover');
-      console.log(e);
-      this.pause();
-    }
+    if (this.paused || !this.mouseIsWithinSlideArea(e)) return;
+    this.pause();
   },
   resumeOnMouseout: function(e){
-    if (this.paused && $(e.target).descendantOf(this.root)) {
-      console.log('resumeOnMouseover');
-      console.log(e);
-      this.play();
-    }
+    if (!this.paused || this.mouseIsWithinSlideArea(e)) return;
+    // if mousing out within the slide area, return
+    this.play();
+  },
+  mouseIsWithinSlideArea: function(e){
+    var maxX = this.root.cumulativeOffset().left + this.root.getWidth();
+    var minX = this.root.cumulativeOffset().left;
+    var maxY = this.root.cumulativeOffset().top + this.root.getHeight();
+    var minY = this.root.cumulativeOffset().top;
+    if ($R(minX, maxX).include(e.pointerX()) && $R(minY, maxY).include(e.pointerY())) {
+      return true; } else { return false; }
   }
 });

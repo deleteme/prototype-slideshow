@@ -12,7 +12,7 @@
     // simple usage
     Event.observe(window, 'load', windowLoaded.bind(this));
     function windowLoaded (e) {
-      this.basicExample = new SlideShow('basicExample', { slideDuration: 35, crossfade: true });
+      this.basicExample = new SlideShow('basicExample', { slideDuration: 35, crossfade: false });
     }
   </script>
   <style type="text/css" media="screen">
@@ -53,7 +53,7 @@
 
 <body>
 
-<h1>Basic Demo</h1>
+<h1>Basic SlideShow Demo</h1>
 
 <ul id="basicExample">
   <li><img src="http://farm2.static.flickr.com/1151/1298349222_5369d5fef3.jpg?v=0" alt="mouse" /></li>
