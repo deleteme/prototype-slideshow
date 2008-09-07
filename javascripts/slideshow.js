@@ -63,29 +63,29 @@ var SlideShow = Class.create({
     // test 4: autoPlay false, pauseOnMouseover false, (manually starting)
     
     // prevent mousing out from causing the slideshow to start
-    if (!this.autoPlay && this.pauseOnMouseover && this.loopCount == 0) return;
+    if (e && !this.autoPlay && this.pauseOnMouseover && this.loopCount == 0) return;
     
     // if (this.paused) return;
     // prevent against internal mouse movements from triggering a transition
-    if (e) { if (this.mouseIsWithinSlideArea(e)) return; }
-
+    if (e && this.mouseIsWithinSlideArea(e)) return;
+    
     console.log('PLAY');
-
+    
     this.started = true;
     this.paused = false;
     this.transition();
     this.fireEvent('started', { slideshow: this });
   },
   pause: function(e){
-    // do not pause if haven't started playing yet
-    // if it's not started playing
-    // or if it's already paused
-    // or if the mouse isn't within the slide area
-    // return
+    // if it's not started playing, or if it's already paused ,or if the mouse isn't within the slide area return
     if (!this.started || this.paused || !this.mouseIsWithinSlideArea(e)) return;
     console.log('PAUSED');
     this.paused = true;
     this.abortNextTransition();
+    
+    // queue paused test
+    this.setupPausedTest();
+    
     this.fireEvent('paused', { slideshow: this });
   },
   transition: function(){
@@ -161,5 +161,19 @@ var SlideShow = Class.create({
     var minY = this.root.cumulativeOffset().top;
     if ($R(minX, maxX).include(e.pointerX()) && $R(minY, maxY).include(e.pointerY())) {
       return true; } else { return false; }
+  },
+  setupPausedTest: function(){
+    this.schedulePausedTest = function(ev){
+      this.pausedTest = new PeriodicalExecuter(function(pe){
+        console.log('pausedTest: { paused(' + this.paused + '), !this.mouseIsWithinSlideArea(e): ' + !this.mouseIsWithinSlideArea(e));
+        if (this.paused && !this.mouseIsWithinSlideArea(ev)) {
+          console.log('force play');
+          this.play();
+          this.pausedTest.stop();
+        }
+        this.root.stopObserving('mousemove', this.schedulePausedTest);
+      }.bind(this), .2);
+    }.bind(this);
+    this.root.observe('mousemove', this.schedulePausedTest);
   }
 });
