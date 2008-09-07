@@ -99,8 +99,8 @@ var SlideShow = Class.create({
     
     this.loopCount++;
     this.slideIndex++;
-    if (this.slideIndex >= this.slides.length)
-      this.slideIndex = 0;
+    if (this.slides.length < this.slideIndex) this.slideIndex = 0;
+    
     this.fireEvent('transitioned', { slideshow: this, coming: this.coming, going: this.going, loopCount: this.loopCount });
     if (this.options.get('slideDuration') > 0)
       this.transition.bind(this).delay(this.options.get('slideDuration'));
