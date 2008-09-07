@@ -25,18 +25,15 @@ var SlideShow = Class.create({
     });
     this.loopCount = 0;
     this.slideIndex = 0;
-    this.options = this.defaultOptions.merge(options);
+    
     // assigning the options to internal variables
-    this.options.each(function(option){
+    this.defaultOptions.merge(options).each(function(option){
       this[option[0]] = option[1];
     }.bind(this));
     
-    console.log(this);
-    this.effectOptions = { duration: this.options.get('transitionDuration') / 2 };
-    this.slides = this.options.get('slides');
     this.prep();
     this.paused = false;
-    if (this.options.get('autoPlay')) this.play();
+    if (this.autoPlay) this.play();
     this.fireEvent('initialized', { slideshow: this });
   },
   prep: function(){
@@ -61,19 +58,21 @@ var SlideShow = Class.create({
     if (this.loopCount > 0) {
       if (!this.paused || this.mouseIsWithinSlideArea(e)) return;
     }
-    console.log('PLAY');
+    // console.log('PLAY');
     this.paused = false;
     this.transition();
     this.fireEvent('started', { slideshow: this });
   },
   pause: function(e){
     if (this.paused || !this.mouseIsWithinSlideArea(e)) return;
-    console.log('PAUSED');
+    // console.log('PAUSED');
     this.paused = true;
+    this.abortNextTransition();
     this.fireEvent('paused', { slideshow: this });
   },
   transition: function(){
     if (this.paused) return;
+    if (this.nextTransition) this.nextTransition.stop();
     // get slide after visible one, or 1st one if last is visible or none are visible
 
     this.coming = this.slides[this.slideIndex];
@@ -84,27 +83,36 @@ var SlideShow = Class.create({
     // if not fresh start, fade
     if (going != coming) {
       // if crossfade
-      if (this.options.get('crossfade')) {
+      if (this.crossfade) {
         new Effect.Parallel(
           [new Effect.Appear(coming), new Effect.Fade(going)],
           {
-            duration: this.options.get('transitionDuration'),
-            afterFinish: this.prepSlide.curry(going)
+            duration: this.transitionDuration,
+            afterFinish: function(){
+              this.prepSlide(going);
+              this.scheduleNextTransition();
+            }.bind(this)
           }
         );
       } else {
         going.fade({
-          duration: this.options.get('transitionDuration') / 2,
+          duration: this.transitionDuration / 2,
           afterFinish: function(){
             this.prepSlide(going);
-            coming.appear(this.effectOptions);
+            coming.appear({
+              duration: this.transitionDuration / 2,
+              afterFinish: this.scheduleNextTransition.bind(this)
+            });
           }.bind(this)
         });
       }
     }
     // fade in the first time
     else {
-      coming.appear(this.effectOptions);
+      coming.appear({
+        duration: this.transitionDuration / 2,
+        afterFinish: this.scheduleNextTransition.bind(this)
+      });
     }
     
     this.loopCount++;
@@ -112,8 +120,16 @@ var SlideShow = Class.create({
     if (this.slideIndex >= this.slides.length) this.slideIndex = 0;
     
     this.fireEvent('transitioned', { slideshow: this, coming: coming, going: going, loopCount: this.loopCount });
-    if (this.options.get('slideDuration') > 0)
-      this.transition.bind(this).delay(this.options.get('slideDuration'));
+  },
+  scheduleNextTransition: function(){
+    if (this.slideDuration <= 0) return;
+    this.nextTransition = new PeriodicalExecuter(function(nextTransition){
+      if (this.paused) return;
+      this.transition();
+    }.bind(this), this.slideDuration);
+  },
+  abortNextTransition: function(){
+    this.nextTransition.stop();
   },
   fireEvent: function(name, memo){
     // console.log(this.root.identify() + '_slideshow:' + name);
