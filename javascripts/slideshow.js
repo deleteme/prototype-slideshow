@@ -57,11 +57,11 @@ var SlideShow = Class.create({
   play: function(e){
     if (this.loopCount > 0) {
       if (!this.paused || this.mouseIsWithinSlideArea(e)) return;
+      // console.log('PLAY');
+      this.paused = false;
+      this.transition();
+      this.fireEvent('started', { slideshow: this });
     }
-    // console.log('PLAY');
-    this.paused = false;
-    this.transition();
-    this.fireEvent('started', { slideshow: this });
   },
   pause: function(e){
     if (this.paused || !this.mouseIsWithinSlideArea(e)) return;
