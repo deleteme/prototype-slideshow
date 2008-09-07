@@ -18,7 +18,7 @@ var SlideShow = Class.create({
       slideDuration: 5,
       transitionDuration: 1,
       loop: true,
-      crossfade: false,
+      crossFade: false,
       slides: this.root.childElements(),
       pauseOnMouseover: true,
       beforeStart: function(){}, afterFinish: function(){}
@@ -129,7 +129,7 @@ var SlideShow = Class.create({
     }.bind(this), this.slideDuration);
   },
   abortNextTransition: function(){
-    this.nextTransition.stop();
+    if (this.nextTransition) this.nextTransition.stop();
   },
   fireEvent: function(name, memo){
     // console.log(this.root.identify() + '_slideshow:' + name);

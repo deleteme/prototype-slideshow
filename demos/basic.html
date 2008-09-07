@@ -21,22 +21,22 @@
     
     ul#basicExample {
       background: #333;
-      height: 502px;
+      height: 242px;
       margin: 0;
       padding: 0;
-      width: 502px;
+      width: 242px;
       position: relative;
     }
       
       ul#basicExample li {
         display: block;
-        height: 502px;
+        height: 242px;
         list-style: none;
         margin: 0;
         padding: 0;
         position: absolute;
         text-align: center;
-        width: 502px;
+        width: 242px;
       }
         
         ul#basicExample li img {
@@ -44,20 +44,20 @@
         }
     
     #demo {
-      border: 1px solid blue;
-      float: left;
-      width: 520px;
+      float: right;
+      margin-left: 20px;
+      width: 300px;
     }
     
     #documentation {
-      border: 1px solid red;
-      float: right;
-      width: 400px;
+      float: none;
+      max-width: 760px;
+      min-width: 500px;
     }
     
       #documentation pre {
         font-size: 11px;
-        overflow: scroll;
+/*        overflow: scroll;*/
       }
       
   </style>
@@ -67,7 +67,6 @@
 
 <div id="demo">
   
-  <h1 id="demoTitle">Basic SlideShow Demo</h1>
   
   <ul id="basicExample">
     <li><img src="http://farm2.static.flickr.com/1151/1298349222_5369d5fef3_m.jpg" alt="red mouse" /></li>
@@ -78,17 +77,58 @@
 </div>
 
 <div id="documentation">
+
+  <h1 id="demoTitle">Basic SlideShow Demo</h1>
   
   <h2>Documentation</h2>
   
   <h5>Markup</h5>
 <pre>
 &lt;ul id=&quot;basicExample&quot;&gt;
-  &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1151/1298349222_5369d5fef3.jpg?v=0&quot; alt=&quot;mouse&quot; /&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1313/1298996325_1b6410e520.jpg?v=0&quot; alt=&quot;yellow bird&quot; /&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1094/1305897298_4b930b9afa.jpg?v=0&quot; alt=&quot;line bird&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1151/1298349222_5369d5fef3_m.jpg&quot; alt=&quot;red mouse&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1313/1298996325_1b6410e520_m.jpg&quot; alt=&quot;yellow bird&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1094/1305897298_4b930b9afa_m.jpg&quot; alt=&quot;green frog&quot; /&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </pre>
+
+  <h5>Javascript</h5>
+
+<pre>
+Event.observe(window, 'load', windowLoaded.bind(this));
+function windowLoaded (e) {
+  // simple usage
+  this.basicExample = new SlideShow('basicExample', { autoPlay: false, slideDuration: 5, crossFade: true });
+}
+</pre>
+
+  <h5>CSS</h5>
+  
+<pre>
+ul#basicExample {
+  background: #333;
+  height: 242px;
+  margin: 0;
+  padding: 0;
+  width: 242px;
+  position: relative;
+}
+  
+  ul#basicExample li {
+    display: block;
+    height: 242px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    width: 242px;
+  }
+    
+    ul#basicExample li img {
+      border: 1px solid #000;
+    }
+</pre>
+  
 </div>
 
 
