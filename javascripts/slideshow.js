@@ -119,14 +119,6 @@ var SlideShow = Class.create({
     // console.log(this.root.identify() + '_slideshow:' + name);
     this.root.fire(this.root.id + '_slideshow:' + name, memo);
   },
-  // pauseOnMouseover: function(e){
-  //   if (this.paused || !this.mouseIsWithinSlideArea(e)) return;
-  //   this.pause();
-  // },
-  // resumeOnMouseout: function(e){
-  //   if (!this.paused || this.mouseIsWithinSlideArea(e)) return;
-  //   this.play();
-  // },
   mouseIsWithinSlideArea: function(e){
     var maxX = this.root.cumulativeOffset().left + this.root.getWidth();
     var minX = this.root.cumulativeOffset().left;
