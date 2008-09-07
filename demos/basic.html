@@ -12,16 +12,17 @@
   <style type="text/css" media="screen">
     
     body {
+      background: #fff;
       font-family: sans-serif;
-      margin: 0;
+      margin: 20px;
+      min-width: 760px;
       padding: 0;
-      text-align: center;
     }
     
     ul#basicExample {
       background: #333;
       height: 502px;
-      margin: 0 auto;
+      margin: 0;
       padding: 0;
       width: 502px;
       position: relative;
@@ -41,19 +42,55 @@
         ul#basicExample li img {
           border: 1px solid #000;
         }
-        
+    
+    #demo {
+      border: 1px solid blue;
+      float: left;
+      width: 520px;
+    }
+    
+    #documentation {
+      border: 1px solid red;
+      float: right;
+      width: 400px;
+    }
+    
+      #documentation pre {
+        font-size: 11px;
+        overflow: scroll;
+      }
+      
   </style>
 </head>
 
 <body>
 
-<h1>Basic SlideShow Demo</h1>
+<div id="demo">
+  
+  <h1 id="demoTitle">Basic SlideShow Demo</h1>
+  
+  <ul id="basicExample">
+    <li><img src="http://farm2.static.flickr.com/1151/1298349222_5369d5fef3_m.jpg" alt="red mouse" /></li>
+    <li><img src="http://farm2.static.flickr.com/1313/1298996325_1b6410e520_m.jpg" alt="yellow bird" /></li>
+    <li><img src="http://farm2.static.flickr.com/1094/1305897298_4b930b9afa_m.jpg" alt="green frog" /></li>
+  </ul>
 
-<ul id="basicExample">
-  <li><img src="http://farm2.static.flickr.com/1151/1298349222_5369d5fef3.jpg?v=0" alt="mouse" /></li>
-  <li><img src="http://farm2.static.flickr.com/1313/1298996325_1b6410e520.jpg?v=0" alt="yellow bird" /></li>
-  <li><img src="http://farm2.static.flickr.com/1094/1305897298_4b930b9afa.jpg?v=0" alt="line bird" /></li>
-</ul>
+</div>
+
+<div id="documentation">
+  
+  <h2>Documentation</h2>
+  
+  <h5>Markup</h5>
+<pre>
+&lt;ul id=&quot;basicExample&quot;&gt;
+  &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1151/1298349222_5369d5fef3.jpg?v=0&quot; alt=&quot;mouse&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1313/1298996325_1b6410e520.jpg?v=0&quot; alt=&quot;yellow bird&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1094/1305897298_4b930b9afa.jpg?v=0&quot; alt=&quot;line bird&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+</div>
+
 
 </body>
 </html>
