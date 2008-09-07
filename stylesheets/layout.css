@@ -1,0 +1,42 @@
+body {
+  background: #fff;
+  font-family: sans-serif;
+  margin: 20px;
+  min-width: 760px;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 1em 0 0 0;
+}
+
+pre {
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+#demo {
+  background: #fff;
+  border-left: 1px solid #ccc;
+  float: right;
+  margin-top: 1em;
+  padding: 0 20px 20px 20px;
+  position: relative;
+  width: 300px;
+  z-index: 1;
+}
+
+#code {
+  background: #fff;
+  border-left: 1px solid #ccc;
+  margin-top: 1em;
+  max-width: 760px;
+  min-width: 480px;
+  padding: 0 0 20px 20px;
+}
+
+  #code pre, #code code {
+    font-family: 'Monaco', monospace;
+    font-size: 12px;
+  }
