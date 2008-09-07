@@ -26,6 +26,12 @@ var SlideShow = Class.create({
     this.loopCount = 0;
     this.slideIndex = 0;
     this.options = this.defaultOptions.merge(options);
+    // assigning the options to internal variables
+    this.options.each(function(option){
+      this[option[0]] = option[1];
+    }.bind(this));
+    
+    console.log(this);
     this.effectOptions = { duration: this.options.get('transitionDuration') / 2 };
     this.slides = this.options.get('slides');
     this.prep();
@@ -42,8 +48,8 @@ var SlideShow = Class.create({
       });
     };
     
-    if (this.options.get('pauseOnMouseover')){
-      this.root.observe('mouseover', this.pauseOnMouseover.bind(this)).observe('mouseout', this.resumeOnMouseout.bind(this))
+    if (this.pauseOnMouseover){
+      this.root.observe('mouseover', this.pause.bind(this)).observe('mouseout', this.play.bind(this));
     }
     
     this.fireEvent('prepped', { slideshow: this });
@@ -51,13 +57,17 @@ var SlideShow = Class.create({
   prepSlide: function(slide){
     return slide.setStyle({ display: 'none', opacity: 0 });
   },
-  play: function(){
+  play: function(e){
+    if (this.loopCount > 0) {
+      if (!this.paused || this.mouseIsWithinSlideArea(e)) return;
+    }
     console.log('PLAY');
     this.paused = false;
     this.transition();
     this.fireEvent('started', { slideshow: this });
   },
-  pause: function(){
+  pause: function(e){
+    if (this.paused || !this.mouseIsWithinSlideArea(e)) return;
     console.log('PAUSED');
     this.paused = true;
     this.fireEvent('paused', { slideshow: this });
@@ -99,7 +109,7 @@ var SlideShow = Class.create({
     
     this.loopCount++;
     this.slideIndex++;
-    if (this.slides.length < this.slideIndex) this.slideIndex = 0;
+    if (this.slideIndex >= this.slides.length) this.slideIndex = 0;
     
     this.fireEvent('transitioned', { slideshow: this, coming: coming, going: going, loopCount: this.loopCount });
     if (this.options.get('slideDuration') > 0)
@@ -109,15 +119,14 @@ var SlideShow = Class.create({
     // console.log(this.root.identify() + '_slideshow:' + name);
     this.root.fire(this.root.id + '_slideshow:' + name, memo);
   },
-  pauseOnMouseover: function(e){
-    if (this.paused || !this.mouseIsWithinSlideArea(e)) return;
-    this.pause();
-  },
-  resumeOnMouseout: function(e){
-    if (!this.paused || this.mouseIsWithinSlideArea(e)) return;
-    // if mousing out within the slide area, return
-    this.play();
-  },
+  // pauseOnMouseover: function(e){
+  //   if (this.paused || !this.mouseIsWithinSlideArea(e)) return;
+  //   this.pause();
+  // },
+  // resumeOnMouseout: function(e){
+  //   if (!this.paused || this.mouseIsWithinSlideArea(e)) return;
+  //   this.play();
+  // },
   mouseIsWithinSlideArea: function(e){
     var maxX = this.root.cumulativeOffset().left + this.root.getWidth();
     var minX = this.root.cumulativeOffset().left;
