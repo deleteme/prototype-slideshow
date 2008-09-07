@@ -1,5 +1,4 @@
-Event.observe(window, 'load', windowLoaded.bind(this));
-function windowLoaded (e) {
+Event.observe(window, 'load', function(){
   // simple usage
-  this.basicExample = new SlideShow('basicExample', { autoPlay: false, slideDuration: 5, crossFade: true });
-}
+  this.basicExample = new SlideShow('basicExample', { autoPlay: false, pauseOnMouseover: true });
+});

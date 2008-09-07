@@ -4,11 +4,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>basic demo</title>
+  <title>Basic SlideShow Demo</title>
   <script src="../javascripts/prototype.js" type="text/javascript" charset="utf-8"></script>
   <script src="../javascripts/effects.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../javascripts/codehighlighter/code_highlighter.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../javascripts/codehighlighter/css.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../javascripts/codehighlighter/html.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../javascripts/codehighlighter/javascript.js" type="text/javascript" charset="utf-8"></script>
+  
   <script src="../javascripts/slideshow.js" type="text/javascript" charset="utf-8"></script>
   <script src="basic.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" href="../stylesheets/codehighlighter.css" type="text/css" media="screen" title="Code Highlighter" charset="utf-8" />
+  
   <style type="text/css" media="screen">
     
     body {
@@ -57,7 +64,6 @@
     
       #documentation pre {
         font-size: 11px;
-/*        overflow: scroll;*/
       }
       
   </style>
@@ -82,28 +88,27 @@
   
   <h2>Documentation</h2>
   
-  <h5>Markup</h5>
-<pre>
+  <h5>HTML</h5>
+<pre><code class="html">
 &lt;ul id=&quot;basicExample&quot;&gt;
   &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1151/1298349222_5369d5fef3_m.jpg&quot; alt=&quot;red mouse&quot; /&gt;&lt;/li&gt;
   &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1313/1298996325_1b6410e520_m.jpg&quot; alt=&quot;yellow bird&quot; /&gt;&lt;/li&gt;
   &lt;li&gt;&lt;img src=&quot;http://farm2.static.flickr.com/1094/1305897298_4b930b9afa_m.jpg&quot; alt=&quot;green frog&quot; /&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</pre>
+</code></pre>
 
   <h5>Javascript</h5>
 
-<pre>
-Event.observe(window, 'load', windowLoaded.bind(this));
-function windowLoaded (e) {
+<pre><code class="javascript">
+Event.observe(window, 'load', function(){
   // simple usage
-  this.basicExample = new SlideShow('basicExample', { autoPlay: false, slideDuration: 5, crossFade: true });
-}
-</pre>
+  new SlideShow('basicExample');
+});
+</code></pre>
 
   <h5>CSS</h5>
   
-<pre>
+<pre><code class="css">
 ul#basicExample {
   background: #333;
   height: 242px;
@@ -127,7 +132,7 @@ ul#basicExample {
     ul#basicExample li img {
       border: 1px solid #000;
     }
-</pre>
+</code></pre>
   
 </div>
 
