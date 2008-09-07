@@ -69,30 +69,32 @@ var SlideShow = Class.create({
     this.coming = this.slides[this.slideIndex];
     this.going = this.coming.previous() || this.slides.last();
     
+    var coming = this.coming; var going = this.going;
+    
     // if not fresh start, fade
-    if (this.going != this.coming) {
+    if (going != coming) {
       // if crossfade
       if (this.options.get('crossfade')) {
         new Effect.Parallel(
-          [new Effect.Appear(this.coming), new Effect.Fade(this.going)],
+          [new Effect.Appear(coming), new Effect.Fade(going)],
           {
             duration: this.options.get('transitionDuration'),
-            afterFinish: this.prepSlide.curry(this.going)
+            afterFinish: this.prepSlide.curry(going)
           }
         );
       } else {
-        this.going.fade({
+        going.fade({
           duration: this.options.get('transitionDuration') / 2,
           afterFinish: function(){
-            this.prepSlide(this.going);
-            this.coming.appear(this.effectOptions);
+            this.prepSlide(going);
+            coming.appear(this.effectOptions);
           }.bind(this)
         });
       }
     }
     // fade in the first time
     else {
-      this.coming.appear(this.effectOptions);
+      coming.appear(this.effectOptions);
     }
     
     this.loopCount++;
