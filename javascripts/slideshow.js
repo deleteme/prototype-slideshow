@@ -177,3 +177,13 @@ var SlideShow = Class.create({
   //   this.root.observe('mousemove', this.schedulePausedTest);
   // }
 });
+
+
+var SlideShowWithControls = Class.create(
+  SlideShow,
+  {
+    initialize: function($super, element, options){
+      
+    }
+  }
+);
