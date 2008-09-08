@@ -49,6 +49,37 @@
           border: 1px solid #000;
         }
         
+    ul#slideShowControls {
+      background: #e5e5e5;
+      border-left: 1px solid #e5e5e5;
+      border-right: 1px solid #e5e5e5;
+      border-top: 1px solid #e5e5e5;
+      font-size: 11px;
+      height: 30px;
+      line-height: 30px;
+      margin: 0;
+      padding: 0;
+      width: 240px;
+    }
+      
+      ul#slideShowControls li {
+        display: inline;
+        list-style: none;
+      }
+      
+        ul#slideShowControls li a {
+          background: #e5e5e5;
+          color: #333;
+          float: left;
+          height: 30px;
+          padding: 0 6px;
+          text-decoration: none;
+        }
+        
+        ul#slideShowControls li a:hover {
+          background: #fff;
+        }
+    
   </style>
 </head>
 
@@ -59,6 +90,14 @@
   <div id="demo">
   
     <h2>Demo</h2>
+    
+    <ul id="slideShowControls">
+      <li><a href="#previous">Previous</a></li>
+      <li><a href="#pause">Pause</a></li>
+      <li><a href="#play">Play</a></li>
+      <li><a href="#playPause">Play/Pause</a></li>
+      <li><a href="#next">Next</a></li>
+    </ul>
     
     <ul id="slideShowWithControls">
       <li><img src="../images/red-mouse.jpg" alt="red mouse" /></li>
