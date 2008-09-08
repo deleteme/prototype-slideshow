@@ -179,11 +179,13 @@ var SlideShow = Class.create({
 });
 
 
-var SlideShowWithControls = Class.create(
-  SlideShow,
-  {
-    initialize: function($super, element, options){
-      
-    }
+var SlideShowWithControls = Class.create(SlideShow, {
+  initialize: function($super, element, controls, options){
+    this.$super = $super;
+    this.element = element;
+    this.controls = controls;
+    this.options = options;
+    this.$super(this.element, this.options);
+    // console.log($super);
   }
-);
+});
