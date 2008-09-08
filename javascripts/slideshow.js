@@ -136,7 +136,7 @@ var SlideShow = Class.create({
     
     this.loopCount++;
     this.slideIndex++;
-    if (this.slideIndex >= this.slides.length) this.slideIndex = 0;
+    if (this.loop && this.slideIndex >= this.slides.length) this.slideIndex = 0;
     
     this.fireEvent('transitioned', { slideshow: this, coming: coming, going: going, loopCount: this.loopCount });
   },
@@ -161,7 +161,7 @@ var SlideShow = Class.create({
     var minY = this.root.cumulativeOffset().top;
     if ($R(minX, maxX).include(e.pointerX()) && $R(minY, maxY).include(e.pointerY())) {
       return true; } else { return false; }
-  },
+  }//,
   // setupPausedTest: function(){
   //   this.schedulePausedTest = function(ev){
   //     this.pausedTest = new PeriodicalExecuter(function(pe){
