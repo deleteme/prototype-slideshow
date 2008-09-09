@@ -26,6 +26,7 @@ var SlideShow = Class.create({
       crossFade: false,
       slides: this.root.childElements(),
       pauseOnMouseover: true,
+      events: { initialize: 'dom:loaded', play: 'window:loaded' },
       beforeStart: function(){}, afterFinish: function(){}
     });
     
@@ -40,8 +41,9 @@ var SlideShow = Class.create({
     }.bind(this));
     
     this.prep();
-
-    if (this.autoPlay) this.play();
+    // document.observe(this.events.prep, this.prep.bind(this));
+    
+    if (this.autoPlay) document.observe(this.events.play, this.play.bind(this));
     this.fireEvent('initialized', { slideshow: this });
   },
   prep: function(){
