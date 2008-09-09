@@ -13,6 +13,9 @@ EXAMPLE USAGE:
   TODO make the default slideshow class use dom:loaded and window:loaded custom events
 */
 
+/*
+  TODO add a way to delete or remove a slideshow
+*/
 var SlideShow = Class.create({
   initialize: function(element, options){
     this.element = element;
