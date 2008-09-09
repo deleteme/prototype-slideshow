@@ -1,16 +1,175 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>SlideShow with Custom Events Demo 1: Simple</title>
+  <script src="../javascripts/prototype.js" type="text/javascript"></script>
+  <script src="../javascripts/effects.js" type="text/javascript"></script>
+  <script src="../javascripts/codehighlighter/code_highlighter.js" type="text/javascript"></script>
+  <script src="../javascripts/codehighlighter/css.js" type="text/javascript"></script>
+  <script src="../javascripts/codehighlighter/html.js" type="text/javascript"></script>
+  <script src="../javascripts/codehighlighter/javascript.js" type="text/javascript"></script>
+  
+  <script src="../javascripts/slideshow.js" type="text/javascript"></script>
+  <script type="text/javascript">
 
-	<title>slideshow-with-custom-events</title>
-	
+    Event.observe(window, 'load', function(){
+      this.slideShowWithControls = new SlideShowWithControls(
+        'slideShowWithControls',
+        {
+          previous: $('previous'),
+          play: $('play'),
+          pause: $('pause'),
+          toggle: $('toggle'),
+          next: $('next')
+        },
+        {
+          keyboardShortcuts: false
+        }
+      );
+    });
+
+  </script>
+  <link rel="stylesheet" href="../stylesheets/codehighlighter.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="../stylesheets/layout.css" type="text/css" media="screen" />
+  
+  <style type="text/css" media="screen">
+    
+    ul#slideShowWithControls {
+      background: #e5e5e5;
+      height: 242px;
+      margin: 0;
+      padding: 0;
+      width: 242px;
+      position: relative;
+    }
+      
+      ul#slideShowWithControls li {
+        display: block;
+        height: 242px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        text-align: center;
+        width: 242px;
+      }
+        
+        ul#slideShowWithControls li img {
+          border: 1px solid #000;
+        }
+        
+    ul#slideShowControls {
+      background: #e5e5e5;
+      border-left: 1px solid #e5e5e5;
+      border-right: 1px solid #e5e5e5;
+      border-top: 1px solid #e5e5e5;
+      font-size: 11px;
+      height: 30px;
+      line-height: 30px;
+      margin: 0;
+      padding: 0;
+      width: 240px;
+    }
+      
+      ul#slideShowControls li {
+        display: inline;
+        list-style: none;
+      }
+      
+        ul#slideShowControls li a {
+          background: #e5e5e5;
+          color: #333;
+          float: left;
+          height: 30px;
+          padding: 0 6px;
+          text-decoration: none;
+        }
+        
+        ul#slideShowControls li a:hover {
+          background: #fff;
+        }
+    
+  </style>
 </head>
 
 <body>
 
+  <h1>SlideShow with Controls</h1>
+  
+  <div id="demo">
+  
+    <h2>Demo</h2>
+    
+    <ul id="slideShowControls">
+      <li><a id="previous" href="#previous">Previous</a></li>
+      <li><a id="pause" href="#pause">Pause</a></li>
+      <li><a id="play" href="#play">Play</a></li>
+      <li><a id="toggle" href="#toggle">Toggle</a></li>
+      <li><a id="next" href="#next">Next</a></li>
+    </ul>
+    
+    <ul id="slideShowWithControls">
+      <li><img src="../images/red-mouse.jpg" alt="red mouse" /></li>
+      <li><img src="../images/yellow-bird.jpg" alt="yellow bird" /></li>
+      <li><img src="../images/green-frog.jpg" alt="green frog" /></li>
+    </ul>
+    
+  </div>
+  
+  <div id="code">
+    
+    <h2>Code</h2>
+    
+    <h5>Javascript</h5>
+
+<pre><code class="javascript">
+Event.observe(window, 'load', function(){
+  this.slideShowWithControls = new SlideShow('slideShowWithControls');
+});
+</code></pre>
+    
+    <h5>HTML</h5>
+
+<pre><code class="html">
+&lt;ul id=&quot;basicExample&quot;&gt;
+  &lt;li&gt;&lt;img src=&quot;../images/red-mouse.jpg&quot; alt=&quot;red mouse&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;img src=&quot;../images/yellow-bird.jpg&quot; alt=&quot;yellow bird&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;img src=&quot;../images/green-frog.jpg&quot; alt=&quot;green frog&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+
+    <h5>CSS</h5>
+  
+<pre><code class="css">
+ul#slideShowWithControls {
+  background: #e5e5e5;
+  height: 242px;
+  margin: 0;
+  padding: 0;
+  width: 242px;
+  position: relative;
+}
+  
+  ul#slideShowWithControls li {
+    display: block;
+    height: 242px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    width: 242px;
+  }
+    
+    ul#slideShowWithControls li img {
+      border: 1px solid #000;
+    }
+</code></pre>
+  
+  </div>
 
 </body>
 </html>
