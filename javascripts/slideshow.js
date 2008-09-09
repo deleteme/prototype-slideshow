@@ -47,10 +47,12 @@ var SlideShow = Class.create({
     
     this.prep();
     
-    if (this.autoPlay) document.observe(this.events.play, function(){
-      console.log('play');
-      this.play();
-    }.bind(this));
+    if (this.autoPlay) {
+      document.observe(this.events.play, function(){
+        console.log('play');
+        this.play();
+      }.bind(this));
+    }
     
     this.fireEvent('initialized', { slideshow: this });
     
@@ -219,7 +221,6 @@ var SlideShowWithControls = Class.create(SlideShow, {
 */
 
 
-Event.observe(window, 'loaded', function(e){
-  console.log('firing window:loaded');
+Event.observe(window, 'load', function(e){
   document.fire('window:loaded');
 });
