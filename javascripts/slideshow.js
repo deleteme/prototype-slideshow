@@ -15,39 +15,48 @@ EXAMPLE USAGE:
 
 var SlideShow = Class.create({
   initialize: function(element, options){
-    if (!$(element)) return;
-    this.root = $(element);
-    this.fireEvent('initializing', { slideshow: this });
+    this.element = element;
+    this.options = options;
     this.defaultOptions = $H({
       autoPlay: true,
       slideDuration: 5,
       transitionDuration: 1,
       loop: true,
       crossFade: false,
-      slides: this.root.childElements(),
       pauseOnMouseover: true,
-      events: { initialize: 'dom:loaded', play: 'window:loaded' },
+      slidesSelector: '> *',
+      events: { init: 'dom:loaded', play: 'window:loaded' },
       beforeStart: function(){}, afterFinish: function(){}
     });
-    
+    // assigning the options to internal variables
+    this.defaultOptions.merge(this.options).each(function(option){
+      this[option[0]] = option[1];
+    }.bind(this));
+    if (this.autoPlay) document.observe(this.events.init, this.init.bind(this));
+  },
+  init: function(){
+    if (!$(this.element)) return;
+    this.root = $(this.element);
+    this.id = this.root.identify();
+    this.fireEvent('initializing', { slideshow: this });
+    this.slides = $$('#' + new String(this.id) + ' ' + new String(this.slidesSelector));
     this.loopCount = 0;
     this.slideIndex = 0;
     this.paused = false;
     this.started = false;
     
-    // assigning the options to internal variables
-    this.defaultOptions.merge(options).each(function(option){
-      this[option[0]] = option[1];
+    this.prep();
+    
+    if (this.autoPlay) document.observe(this.events.play, function(){
+      console.log('play');
+      this.play();
     }.bind(this));
     
-    this.prep();
-    // document.observe(this.events.prep, this.prep.bind(this));
-    
-    if (this.autoPlay) document.observe(this.events.play, this.play.bind(this));
     this.fireEvent('initialized', { slideshow: this });
+    
   },
   prep: function(){
-    this.root.makePositioned().identify();
+    this.root.makePositioned();
     
     for (var i=0; i < this.slides.length; i++) {
       this.prepSlide(this.slides[i]).setStyle({
@@ -158,7 +167,7 @@ var SlideShow = Class.create({
     if (this.nextTransition) this.nextTransition.stop();
   },
   fireEvent: function(name, memo){
-    // console.log(this.root.identify() + '_slideshow:' + name);
+    console.log(name);
     this.root.fire(this.root.id + '_slideshow:' + name, memo);
   },
   mouseIsWithinSlideArea: function(e){
@@ -196,6 +205,7 @@ var SlideShow = Class.create({
     keyboard shortcuts?
 
 */
+/*
 var SlideShowWithControls = Class.create(SlideShow, {
   initialize: function($super, element, controls, options){
     this.$super = $super;
@@ -206,5 +216,10 @@ var SlideShowWithControls = Class.create(SlideShow, {
     // console.log($super);
   }
 });
+*/
 
 
+Event.observe(window, 'loaded', function(e){
+  console.log('firing window:loaded');
+  document.fire('window:loaded');
+});
