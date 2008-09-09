@@ -161,24 +161,33 @@ var SlideShow = Class.create({
     var minY = this.root.cumulativeOffset().top;
     if ($R(minX, maxX).include(e.pointerX()) && $R(minY, maxY).include(e.pointerY())) {
       return true; } else { return false; }
-  }//,
-  // setupPausedTest: function(){
-  //   this.schedulePausedTest = function(ev){
-  //     this.pausedTest = new PeriodicalExecuter(function(pe){
-  //       console.log('pausedTest: { paused(' + this.paused + '), !this.mouseIsWithinSlideArea(ev): ' + !this.mouseIsWithinSlideArea(ev));
-  //       if (this.paused && !this.mouseIsWithinSlideArea(ev)) {
-  //         console.log('force play');
-  //         this.play();
-  //       }
-  //       this.pausedTest.stop();
-  //       this.root.stopObserving('mousemove', this.schedulePausedTest);
-  //     }.bind(this), .2);
-  //   }.bind(this);
-  //   this.root.observe('mousemove', this.schedulePausedTest);
-  // }
+  }
+  /*,
+  setupPausedTest: function(){
+    this.schedulePausedTest = function(ev){
+      this.pausedTest = new PeriodicalExecuter(function(pe){
+        console.log('pausedTest: { paused(' + this.paused + '), !this.mouseIsWithinSlideArea(ev): ' + !this.mouseIsWithinSlideArea(ev));
+        if (this.paused && !this.mouseIsWithinSlideArea(ev)) {
+          console.log('force play');
+          this.play();
+        }
+        this.pausedTest.stop();
+        this.root.stopObserving('mousemove', this.schedulePausedTest);
+      }.bind(this), .2);
+    }.bind(this);
+    this.root.observe('mousemove', this.schedulePausedTest);
+  }
+  */
 });
 
 
+/*
+  
+  controls
+    previous, next, play, pause, toggle
+    numericals?
+
+*/
 var SlideShowWithControls = Class.create(SlideShow, {
   initialize: function($super, element, controls, options){
     this.$super = $super;
@@ -189,3 +198,5 @@ var SlideShowWithControls = Class.create(SlideShow, {
     // console.log($super);
   }
 });
+
+
