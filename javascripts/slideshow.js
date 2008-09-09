@@ -84,7 +84,7 @@ var SlideShow = Class.create({
     // prevent against internal mouse movements from triggering a transition
     if (e && this.mouseIsWithinSlideArea(e)) return;
     
-    // console.log('PLAY');
+    console.log('PLAY');
     
     this.started = true;
     this.paused = false;
@@ -94,7 +94,7 @@ var SlideShow = Class.create({
   pause: function(e){
     // if it's not started playing, or if it's already paused ,or if the mouse isn't within the slide area return
     if (!this.started || this.paused || !this.mouseIsWithinSlideArea(e)) return;
-    // console.log('PAUSED');
+    console.log('PAUSED');
     this.paused = true;
     this.abortNextTransition();
     
@@ -165,6 +165,7 @@ var SlideShow = Class.create({
     if (this.nextTransition) this.nextTransition.stop();
   },
   fireEvent: function(name, memo){
+    console.log(name);
     this.root.fire(this.root.id + '_slideshow:' + name, memo);
   },
   mouseIsWithinSlideArea: function(e){

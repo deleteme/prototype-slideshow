@@ -1,12 +1,33 @@
 body {
   background: #fff;
+  color: #333;
   font-family: sans-serif;
+  font-size: 110%;
   margin: 20px;
   min-width: 760px;
   padding: 0;
 }
 
+  #head {
+    background: #333;
+    padding: 20px;
+  }
+    
+    #head h1 {
+      color: #fff;
+      padding-bottom: 0em;
+      padding-top: .5px;
+    }
+    
+    #head h4 {
+      color: #ccc;
+      padding-top: 0px;
+    }
+
 h1, h2, h3, h4, h5, h6 {
+/*  font-family: 'Century', 'Garamond', 'Garamond Premier Pro', 'Georgia', serif;*/
+  font-family: 'Futura', 'Century Gothic', 'Helvetica', 'Arial', sans-serif;
+  letter-spacing: -0.05em;
   margin: 0;
   padding: 1em 0 0 0;
 }
@@ -38,5 +59,7 @@ pre {
 
   #code pre, #code code {
     font-family: 'Monaco', monospace;
-    font-size: 12px;
+    font-size: .85em;
+/*    font-size: 11px;*/
   }
+
