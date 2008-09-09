@@ -1,3 +1,4 @@
+var __debug = true;
 /*
 
 
@@ -88,7 +89,7 @@ var SlideShow = Class.create({
     // prevent against internal mouse movements from triggering a transition
     if (e && this.mouseIsWithinSlideArea(e)) return;
     
-    console.log('PLAY');
+    cl('PLAY');
     
     this.started = true;
     this.paused = false;
@@ -98,7 +99,7 @@ var SlideShow = Class.create({
   pause: function(e){
     // if it's not started playing, or if it's already paused ,or if the mouse isn't within the slide area return
     if (!this.started || this.paused || !this.mouseIsWithinSlideArea(e)) return;
-    console.log('PAUSED');
+    cl('PAUSED');
     this.paused = true;
     this.abortNextTransition();
     
@@ -169,7 +170,7 @@ var SlideShow = Class.create({
     if (this.nextTransition) this.nextTransition.stop();
   },
   fireEvent: function(name, memo){
-    console.log(name);
+    cl(name);
     this.root.fire(this.root.id + '_slideshow:' + name, memo);
   },
   mouseIsWithinSlideArea: function(e){
@@ -184,9 +185,9 @@ var SlideShow = Class.create({
   setupPausedTest: function(){
     this.schedulePausedTest = function(ev){
       this.pausedTest = new PeriodicalExecuter(function(pe){
-        console.log('pausedTest: { paused(' + this.paused + '), !this.mouseIsWithinSlideArea(ev): ' + !this.mouseIsWithinSlideArea(ev));
+        cl('pausedTest: { paused(' + this.paused + '), !this.mouseIsWithinSlideArea(ev): ' + !this.mouseIsWithinSlideArea(ev));
         if (this.paused && !this.mouseIsWithinSlideArea(ev)) {
-          console.log('force play');
+          cl('force play');
           this.play();
         }
         this.pausedTest.stop();
@@ -215,7 +216,7 @@ var SlideShowWithControls = Class.create(SlideShow, {
     this.controls = controls;
     this.options = options;
     this.$super(this.element, this.options);
-    // console.log($super);
+    // cl($super);
   }
 });
 */
@@ -224,3 +225,9 @@ var SlideShowWithControls = Class.create(SlideShow, {
 Event.observe(window, 'load', function(e){
   document.fire('window:loaded');
 });
+
+// utility function
+function cl (str) {
+  if (__debug);
+    Try.these(function(){ console.log(str); });
+}
