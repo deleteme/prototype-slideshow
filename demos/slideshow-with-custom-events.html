@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>SlideShow with Custom Events Demo 1: Simple</title>
+  <title>Prototype SlideShow Class / Custom Events Demo</title>
   <script src="../javascripts/prototype.js" type="text/javascript"></script>
   <script src="../javascripts/effects.js" type="text/javascript"></script>
   <script src="../javascripts/codehighlighter/code_highlighter.js" type="text/javascript"></script>
@@ -14,30 +14,25 @@
   
   <script src="../javascripts/slideshow.js" type="text/javascript"></script>
   <script type="text/javascript">
-
-    Event.observe(window, 'load', function(){
-      this.slideShowWithControls = new SlideShowWithControls(
-        'slideShowWithControls',
-        {
-          previous: $('previous'),
-          play: $('play'),
-          pause: $('pause'),
-          toggle: $('toggle'),
-          next: $('next')
-        },
-        {
-          keyboardShortcuts: false
-        }
-      );
+  
+    new SlideShow('slideShow', {
+      events: { init: 'dom:loaded', play: 'button:clicked' },
     });
-
+  
+    document.observe('dom:loaded', function(){
+      $('startSlideShowButton').observe('click', function(e){
+        console.log('startSlideShowButton clicked!');
+        $(e.target).fire('button:clicked');
+      });
+    });
+  
   </script>
   <link rel="stylesheet" href="../stylesheets/codehighlighter.css" type="text/css" media="screen" />
   <link rel="stylesheet" href="../stylesheets/layout.css" type="text/css" media="screen" />
   
   <style type="text/css" media="screen">
     
-    ul#slideShowWithControls {
+    ul#slideShow {
       background: #e5e5e5;
       height: 242px;
       margin: 0;
@@ -46,7 +41,7 @@
       position: relative;
     }
       
-      ul#slideShowWithControls li {
+      ul#slideShow li {
         display: block;
         height: 242px;
         list-style: none;
@@ -57,65 +52,35 @@
         width: 242px;
       }
         
-        ul#slideShowWithControls li img {
-          border: 1px solid #000;
-        }
-        
-    ul#slideShowControls {
-      background: #e5e5e5;
-      border-left: 1px solid #e5e5e5;
-      border-right: 1px solid #e5e5e5;
-      border-top: 1px solid #e5e5e5;
-      font-size: 11px;
-      height: 30px;
-      line-height: 30px;
-      margin: 0;
-      padding: 0;
-      width: 240px;
-    }
-      
-      ul#slideShowControls li {
-        display: inline;
-        list-style: none;
-      }
-      
-        ul#slideShowControls li a {
-          background: #e5e5e5;
-          color: #333;
-          float: left;
-          height: 30px;
-          padding: 0 6px;
-          text-decoration: none;
-        }
-        
-        ul#slideShowControls li a:hover {
-          background: #fff;
+        ul#slideShow li img {
+          border: 1px solid #333;
         }
     
   </style>
 </head>
 
 <body>
-
-  <h1>SlideShow with Controls</h1>
+  
+  <div id="head">
+    <h1>Custom Events Demo</h1>
+    <h4>Prototype SlideShow Class</h4>
+    <ul id="nav">
+      <li><a href="../index.html">Return to Index of Demos</a></li>
+      <li><a href="http://github.com/deleteme/prototype-slideshow/wikis">View Project at Github</a></li>
+    </ul>
+  </div>
   
   <div id="demo">
   
     <h2>Demo</h2>
     
-    <ul id="slideShowControls">
-      <li><a id="previous" href="#previous">Previous</a></li>
-      <li><a id="pause" href="#pause">Pause</a></li>
-      <li><a id="play" href="#play">Play</a></li>
-      <li><a id="toggle" href="#toggle">Toggle</a></li>
-      <li><a id="next" href="#next">Next</a></li>
-    </ul>
-    
-    <ul id="slideShowWithControls">
+    <ul id="slideShow">
       <li><img src="../images/red-mouse.jpg" alt="red mouse" /></li>
       <li><img src="../images/yellow-bird.jpg" alt="yellow bird" /></li>
       <li><img src="../images/green-frog.jpg" alt="green frog" /></li>
     </ul>
+    
+    <p><button id="startSlideShowButton">Start SlideShow</button></p>
     
   </div>
   
@@ -123,18 +88,16 @@
     
     <h2>Code</h2>
     
-    <h5>Javascript</h5>
+    <h5>JavaScript</h5>
 
 <pre><code class="javascript">
-Event.observe(window, 'load', function(){
-  this.slideShowWithControls = new SlideShow('slideShowWithControls');
-});
+  new SlideShow('slideShow');
 </code></pre>
     
     <h5>HTML</h5>
 
 <pre><code class="html">
-&lt;ul id=&quot;basicExample&quot;&gt;
+&lt;ul id=&quot;slideShow&quot;&gt;
   &lt;li&gt;&lt;img src=&quot;../images/red-mouse.jpg&quot; alt=&quot;red mouse&quot; /&gt;&lt;/li&gt;
   &lt;li&gt;&lt;img src=&quot;../images/yellow-bird.jpg&quot; alt=&quot;yellow bird&quot; /&gt;&lt;/li&gt;
   &lt;li&gt;&lt;img src=&quot;../images/green-frog.jpg&quot; alt=&quot;green frog&quot; /&gt;&lt;/li&gt;
@@ -144,7 +107,7 @@ Event.observe(window, 'load', function(){
     <h5>CSS</h5>
   
 <pre><code class="css">
-ul#slideShowWithControls {
+ul#slideShow {
   background: #e5e5e5;
   height: 242px;
   margin: 0;
@@ -153,7 +116,7 @@ ul#slideShowWithControls {
   position: relative;
 }
   
-  ul#slideShowWithControls li {
+  ul#slideShow li {
     display: block;
     height: 242px;
     list-style: none;
@@ -164,8 +127,8 @@ ul#slideShowWithControls {
     width: 242px;
   }
     
-    ul#slideShowWithControls li img {
-      border: 1px solid #000;
+    ul#slideShow li img {
+      border: 1px solid #333;
     }
 </code></pre>
   
