@@ -8,6 +8,11 @@ EXAMPLE USAGE:
   new SlideShow('container', { slideDuration: 2 });
 
 */
+
+/*
+  TODO make the default slideshow class use dom:loaded and window:loaded custom events
+*/
+
 var SlideShow = Class.create({
   initialize: function(element, options){
     if (!$(element)) return;
@@ -186,6 +191,7 @@ var SlideShow = Class.create({
   controls
     previous, next, play, pause, toggle
     numericals?
+    keyboard shortcuts?
 
 */
 var SlideShowWithControls = Class.create(SlideShow, {
