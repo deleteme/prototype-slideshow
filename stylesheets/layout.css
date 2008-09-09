@@ -10,31 +10,57 @@ body {
 
   #head {
     background: #333;
-    padding: 20px;
+    /*  font-family: 'Century', 'Garamond', 'Garamond Premier Pro', 'Georgia', serif;*/
+    font-family: 'Futura', 'Century Gothic', 'Helvetica', 'Arial', sans-serif;
+    height: 100px;
+    position: relative;
   }
     
     #head h1 {
       color: #fff;
       padding-bottom: 0em;
-      padding-top: .5px;
+      padding-left: 20px;
+      padding-top: 15px;
     }
     
     #head h4 {
       color: #ccc;
+      padding-left: 20px;
       padding-top: 0px;
     }
+    
+    #head #nav {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      right: 0px;
+      width: 50%;
+      top: 0px;
+    }
+      
+      #head #nav li {
+        display: inline;
+        
+      }
+        
+        #head #nav li a {
+          color: #ccc;
+          float: left;
+          line-height: 100px;
+          padding: 0 1em;
+          text-decoration: none;
+        }
+        
+        #head #nav li a:hover {
+/*          background: #111;*/
+          color: #f2f2f2;
+        }
 
 h1, h2, h3, h4, h5, h6 {
-/*  font-family: 'Century', 'Garamond', 'Garamond Premier Pro', 'Georgia', serif;*/
-  font-family: 'Futura', 'Century Gothic', 'Helvetica', 'Arial', sans-serif;
   letter-spacing: -0.05em;
   margin: 0;
   padding: 1em 0 0 0;
-}
-
-pre {
-  margin-top: 0px;
-  padding-top: 0px;
 }
 
 #demo {
@@ -57,9 +83,13 @@ pre {
   padding: 0 0 20px 20px;
 }
 
+  pre {
+    margin-top: 0px;
+    padding-top: 0px;
+  }
+  
   #code pre, #code code {
     font-family: 'Monaco', monospace;
     font-size: .85em;
-/*    font-size: 11px;*/
   }
 
