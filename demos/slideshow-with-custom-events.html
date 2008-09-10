@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>Prototype SlideShow Class / Custom Events Demo</title>
+  <title>Prototype listOfImages Class / Custom Events Demo</title>
   <script src="../javascripts/prototype.js" type="text/javascript"></script>
   <script src="../javascripts/effects.js" type="text/javascript"></script>
   <script src="../javascripts/codehighlighter/code_highlighter.js" type="text/javascript"></script>
@@ -12,10 +12,10 @@
   <script src="../javascripts/codehighlighter/html.js" type="text/javascript"></script>
   <script src="../javascripts/codehighlighter/javascript.js" type="text/javascript"></script>
   
-  <script src="../javascripts/slideshow.js" type="text/javascript"></script>
+  <script src="../javascripts/listOfImages.js" type="text/javascript"></script>
   <script type="text/javascript">
     
-    new SlideShow('slideShow', {
+    new listOfImages('listOfImages', {
       events: { init: 'dom:loaded', play: 'button:clicked' },
     });
     
@@ -33,7 +33,7 @@
   
   <style type="text/css" media="screen">
     
-    ul#slideShow {
+    ul#listOfImages {
       background: #e5e5e5;
       height: 242px;
       margin: 0;
@@ -42,7 +42,7 @@
       position: relative;
     }
       
-      ul#slideShow li {
+      ul#listOfImages li {
         display: block;
         height: 242px;
         list-style: none;
@@ -53,7 +53,7 @@
         width: 242px;
       }
         
-        ul#slideShow li img {
+        ul#listOfImages li img {
           border: 1px solid #333;
         }
     
@@ -64,10 +64,10 @@
   
   <div id="head">
     <h1>Custom Events Demo</h1>
-    <h4>Prototype SlideShow Class</h4>
+    <h4>Prototype listOfImages Class</h4>
     <ul id="nav">
       <li><a href="../index.html">Return to Index of Demos</a></li>
-      <li><a href="http://github.com/deleteme/prototype-slideshow/wikis">View Project at Github</a></li>
+      <li><a href="http://github.com/deleteme/prototype-listOfImages/wikis">View Project at Github</a></li>
     </ul>
   </div>
   
@@ -75,13 +75,13 @@
   
     <h2>Demo</h2>
     
-    <ul id="slideShow">
+    <ul id="listOfImages">
       <li><img src="../images/red-mouse.jpg" alt="red mouse" /></li>
       <li><img src="../images/yellow-bird.jpg" alt="yellow bird" /></li>
       <li><img src="../images/green-frog.jpg" alt="green frog" /></li>
     </ul>
     
-    <p><button id="startSlideShowButton">Start SlideShow</button></p>
+    <p><button id="startSlideShowButton">Start listOfImages</button></p>
     
   </div>
   
@@ -92,7 +92,7 @@
     <h5>JavaScript</h5>
 
 <pre><code class="javascript">
-new SlideShow('slideShow', {
+new listOfImages('listOfImages', {
   events: { init: 'dom:loaded', play: 'button:clicked' },
 });
 
@@ -108,7 +108,7 @@ document.observe('dom:loaded', function(){
     <h5>HTML</h5>
 
 <pre><code class="html">
-&lt;ul id=&quot;slideShow&quot;&gt;
+&lt;ul id=&quot;listOfImages&quot;&gt;
   &lt;li&gt;&lt;img src=&quot;../images/red-mouse.jpg&quot; alt=&quot;red mouse&quot; /&gt;&lt;/li&gt;
   &lt;li&gt;&lt;img src=&quot;../images/yellow-bird.jpg&quot; alt=&quot;yellow bird&quot; /&gt;&lt;/li&gt;
   &lt;li&gt;&lt;img src=&quot;../images/green-frog.jpg&quot; alt=&quot;green frog&quot; /&gt;&lt;/li&gt;
@@ -118,7 +118,7 @@ document.observe('dom:loaded', function(){
     <h5>CSS</h5>
   
 <pre><code class="css">
-ul#slideShow {
+ul#listOfImages {
   background: #e5e5e5;
   height: 242px;
   margin: 0;
@@ -127,7 +127,7 @@ ul#slideShow {
   position: relative;
 }
   
-  ul#slideShow li {
+  ul#listOfImages li {
     display: block;
     height: 242px;
     list-style: none;
@@ -138,7 +138,7 @@ ul#slideShow {
     width: 242px;
   }
     
-    ul#slideShow li img {
+    ul#listOfImages li img {
       border: 1px solid #333;
     }
 </code></pre>
