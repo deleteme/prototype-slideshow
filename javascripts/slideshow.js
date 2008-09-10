@@ -109,7 +109,7 @@ var SlideShow = Class.create({
     if (this.paused) return;
     if (this.nextTransition) this.nextTransition.stop();
     // get slide after visible one, or 1st one if last is visible or none are visible
-
+    
     this.coming = this.slides[this.slideIndex];
     this.going = this.coming.previous() || this.slides.last();
     
@@ -167,8 +167,8 @@ var SlideShow = Class.create({
     if (this.nextTransition) this.nextTransition.stop();
   },
   fireEvent: function(name, memo){
-    cl(name);
-    this.root.fire(this.root.id + '_slideshow:' + name, memo);
+    cl('SlideShow_' + this.root.id + ':' + name);
+    this.root.fire('SlideShow_' + this.root.id + ':' + name, memo);
   },
   mouseIsWithinSlideArea: function(e){
     var maxX = this.root.cumulativeOffset().left + this.root.getWidth();
