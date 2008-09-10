@@ -191,6 +191,10 @@ var SlideShow = Class.create({
     var minX = this.root.cumulativeOffset().left;
     var maxY = this.root.cumulativeOffset().top + this.root.getHeight();
     var minY = this.root.cumulativeOffset().top;
+    
+    // for whatever reason the minX and the maxY need to be checked like this
+    if (minX == e.pointerX()) return false;
+    if (maxY == e.pointerY()) return false;
     if ($R(minX, maxX).include(e.pointerX()) && $R(minY, maxY).include(e.pointerY())) {
       return true; } else { return false; }
   }
