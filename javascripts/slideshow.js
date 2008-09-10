@@ -50,11 +50,8 @@ var SlideShow = Class.create({
     this.started = false;
     
     this.prep();
-    if (this.events.play != 'window:loaded') this.autoPlay = false;
     
-    if (this.autoPlay) {
-      document.observe(this.events.play, this.play.bind(this));
-    }
+    document.observe(this.events.play, this.play.bind(this));
     
     this.fireEvent('initialized', { slideshow: this });
     
