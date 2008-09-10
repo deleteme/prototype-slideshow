@@ -16,7 +16,7 @@
   <script type="text/javascript">
     
     new SlideShow('sequenceOfImages', {
-      slideDuration: .125,
+      slideDuration: .12,
       transitionDuration: 0,
       crossFade: true,
       loop: true,
@@ -24,6 +24,7 @@
     });
     
     document.observe('dom:loaded', function(){
+      
       $('sequenceOfImages').hide();
       var frames = $A();
       var frameTemplate = new Template('<img src="http://homepage.mac.com/mattgarrett/dinner/dinner#{number}.jpg" />');
@@ -66,7 +67,7 @@
       
       div#sequenceOfImages img {
         display: block;
-        height: 242px;
+        height: 256px;
         left: 0px;
         position: absolute;
         width: 320px;
@@ -94,6 +95,7 @@
     <div id="sequenceOfImages"></div>
     <p id="status">Loading Images</p>
     <p><button id="startButton">Play</button></p>
+    <p>Showing a fragment of <a href="http://www.youtube.com/watch?v=S7xh4NnFKXo">Jan Svankmajer's "Food"</a></p>
     
   </div>
   
@@ -104,57 +106,71 @@
     <h5>JavaScript</h5>
 
 <pre><code class="javascript">
-new SlideShow('listOfImages', {
-  events: { play: 'button:clicked' }
+new SlideShow('sequenceOfImages', {
+  slideDuration: .12,
+  transitionDuration: 0,
+  crossFade: true,
+  loop: true,
+  events: { init: 'slides:loaded', play: 'button:clicked' }
 });
 
 document.observe('dom:loaded', function(){
-  var button = $('startButton');
-  button.observe('click', function(){
-    button.fire('button:clicked');
-    button.insert({ after: '&lt;p&gt;button:clicked&lt;/p&gt;' }).remove();
+  
+  $('sequenceOfImages').hide();
+  var frames = $A();
+  var frameTemplate = new Template('&lt;img src=&quot;http://homepage.mac.com/mattgarrett/dinner/dinner#{number}.jpg&quot; /&gt;');
+  $R(0, 144).each(function(n){
+    var blockSize = 4;
+    var leadingZeros = blockSize - n.toString().length;
+    frames.push(frameTemplate.evaluate({ number: '0'.times(leadingZeros) + n }));
   });
+  $('sequenceOfImages').insert(frames.join(''));
+  
+  Event.observe(window, 'load', function(){
+    document.fire('slides:loaded');
+    $('sequenceOfImages').show();
+    $('status').hide();
+    var button = $('startButton').show();
+    button.observe('click', function(){
+      button.fire('button:clicked');
+      button.insert({ after: '&lt;p&gt;button:clicked&lt;/p&gt;' }).remove();
+    });
+  });
+  
 });
 </code></pre>
     
     <h5>HTML</h5>
 
 <pre><code class="html">
-  &lt;ul id=&quot;listOfImages&quot;&gt;
-    &lt;li&gt;&lt;img src=&quot;../images/red-mouse.jpg&quot; alt=&quot;red mouse&quot; /&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;img src=&quot;../images/yellow-bird.jpg&quot; alt=&quot;yellow bird&quot; /&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;img src=&quot;../images/green-frog.jpg&quot; alt=&quot;green frog&quot; /&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-  
-  &lt;p&gt;&lt;button id=&quot;startButton&quot;&gt;Start SlideShow&lt;/button&gt;&lt;/p&gt;
+&lt;div id=&quot;sequenceOfImages&quot;&gt;&lt;/div&gt;
+&lt;p id=&quot;status&quot;&gt;Loading Images&lt;/p&gt;
+&lt;p&gt;&lt;button id=&quot;startButton&quot;&gt;Play&lt;/button&gt;&lt;/p&gt;
+&lt;p&gt;Showing a fragment of &lt;a href=&quot;http://www.youtube.com/watch?v=S7xh4NnFKXo&quot;&gt;Jan Svankmajer&#x27;s &quot;Food&quot;&lt;/a&gt;&lt;/p&gt;
 </code></pre>
 
     <h5>CSS</h5>
   
 <pre><code class="css">
-ul#listOfImages {
-  background: #e5e5e5;
-  height: 242px;
-  margin: 0;
-  padding: 0;
-  width: 242px;
+#demo {
+  width: 320px;
+}
+
+div#sequenceOfImages {
+  background: #000;
+  height: 256px;
+  width: 320px;
   position: relative;
 }
   
-  ul#listOfImages li {
+  div#sequenceOfImages img {
     display: block;
-    height: 242px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    height: 256px;
+    left: 0px;
     position: absolute;
-    text-align: center;
-    width: 242px;
+    width: 320px;
+    top: 0px;
   }
-    
-    ul#listOfImages li img {
-      border: 1px solid #333;
-    }
 </code></pre>
   
   </div>
