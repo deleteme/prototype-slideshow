@@ -51,7 +51,11 @@ var SlideShow = Class.create({
     
     this.prep();
     
-    document.observe(this.events.play, this.play.bind(this));
+    document.observe(this.events.play, function(){
+      this.play();
+      if (this.pauseOnMouseover)
+        this.root.observe('mouseover', this.pause.bind(this)).observe('mouseout', this.play.bind(this));
+    }.bind(this));
     
     this.fireEvent('initialized', { slideshow: this });
     
@@ -64,9 +68,6 @@ var SlideShow = Class.create({
         position: 'absolute', zIndex: i
       });
     };
-    
-    if (this.pauseOnMouseover)
-      this.root.observe('mouseover', this.pause.bind(this)).observe('mouseout', this.play.bind(this));
     
     this.fireEvent('prepped', { slideshow: this });
   },
