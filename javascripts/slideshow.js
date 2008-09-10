@@ -32,10 +32,14 @@ var SlideShow = Class.create({
       events: { init: 'dom:loaded', play: 'window:loaded' },
       beforeStart: function(){}, afterFinish: function(){}
     });
+    
     // assigning the options to internal variables
     this.defaultOptions.merge(this.options).each(function(option){
       this[option[0]] = option[1];
     }.bind(this));
+    
+    this.events = $H(this.defaultOptions.get('events')).merge(this.events).toObject();
+    
     if (this.autoPlay) document.observe(this.events.init, this.init.bind(this));
   },
   init: function(){
@@ -87,17 +91,15 @@ var SlideShow = Class.create({
     // prevent against internal mouse movements from triggering a transition
     if (e && this.mouseIsWithinSlideArea(e)) return;
     
-    cl('PLAY');
-    
     this.started = true;
     this.paused = false;
-    this.transition();
     this.fireEvent('started', { slideshow: this });
+    this.transition();
   },
   pause: function(e){
     // if it's not started playing, or if it's already paused ,or if the mouse isn't within the slide area return
     if (!this.started || this.paused || !this.mouseIsWithinSlideArea(e)) return;
-    cl('PAUSED');
+    
     this.paused = true;
     this.abortNextTransition();
     
