@@ -15,22 +15,34 @@
   <script src="../javascripts/slideshow.js" type="text/javascript"></script>
   <script type="text/javascript">
     
-    new SlideShow('listOfImages', {
-      events: { play: 'button:clicked' }
+    new SlideShow('sequenceOfImages', {
+      slideDuration: .125,
+      transitionDuration: 0,
+      crossFade: true,
+      loop: true,
+      events: { init: 'slides:loaded', play: 'button:clicked' }
     });
     
     document.observe('dom:loaded', function(){
+      $('sequenceOfImages').hide();
+      var frames = $A();
+      var frameTemplate = new Template('<img src="http://homepage.mac.com/mattgarrett/dinner/dinner#{number}.jpg" />');
+      $R(0, 144).each(function(n){
+        var blockSize = 4;
+        var leadingZeros = blockSize - n.toString().length;
+        frames.push(frameTemplate.evaluate({ number: '0'.times(leadingZeros) + n }));
+      });
+      $('sequenceOfImages').insert(frames.join(''));
       
       Event.observe(window, 'load', function(){
-        
-        
-        
-        var button = $('startButton');
+        document.fire('slides:loaded');
+        $('sequenceOfImages').show();
+        $('status').hide();
+        var button = $('startButton').show();
         button.observe('click', function(){
           button.fire('button:clicked');
           button.insert({ after: '<p>button:clicked</p>' }).remove();
         });
-        
       });
       
     });
@@ -40,30 +52,26 @@
   <link rel="stylesheet" href="../stylesheets/layout.css" type="text/css" media="screen" />
   
   <style type="text/css" media="screen">
+  
+    #demo {
+      width: 320px;
+    }
     
-    ul#listOfImages {
-      background: #e5e5e5;
-      height: 242px;
-      margin: 0;
-      padding: 0;
-      width: 242px;
+    div#sequenceOfImages {
+      background: #000;
+      height: 256px;
+      width: 320px;
       position: relative;
     }
       
-      ul#listOfImages li {
+      div#sequenceOfImages img {
         display: block;
         height: 242px;
-        list-style: none;
-        margin: 0;
-        padding: 0;
+        left: 0px;
         position: absolute;
-        text-align: center;
-        width: 242px;
+        width: 320px;
+        top: 0px;
       }
-        
-        ul#listOfImages li img {
-          border: 1px solid #333;
-        }
     
   </style>
 </head>
@@ -83,13 +91,9 @@
   
     <h2>Demo</h2>
     
-    <ul id="listOfImages">
-      <li><img src="../images/red-mouse.jpg" alt="red mouse" /></li>
-      <li><img src="../images/yellow-bird.jpg" alt="yellow bird" /></li>
-      <li><img src="../images/green-frog.jpg" alt="green frog" /></li>
-    </ul>
-    
-    <p><button id="startButton">Start SlideShow</button></p>
+    <div id="sequenceOfImages"></div>
+    <p id="status">Loading Images</p>
+    <p><button id="startButton">Play</button></p>
     
   </div>
   

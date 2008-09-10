@@ -1,4 +1,4 @@
-var __debug = true;
+var __debug = false;
 /*
 
 
@@ -241,6 +241,6 @@ Event.observe(window, 'load', function(e){
 
 // utility function
 function cl (str) {
-  if (__debug);
+  if (__debug)
     Try.these(function(){ console.log(str); });
 }
