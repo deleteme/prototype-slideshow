@@ -134,7 +134,7 @@ var SlideShow = Class.create({
     // if not fresh start, fade
     if (going != coming) {
       // if crossfade
-      if (this.crossfade) {
+      if (this.crossFade) {
         new Effect.Parallel(
           [new Effect.Appear(coming), new Effect.Fade(going)],
           {
