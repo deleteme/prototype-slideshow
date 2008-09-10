@@ -55,11 +55,16 @@ var SlideShow = Class.create({
     
     this.prep();
     
-    document.observe(this.events.play, function(){
+    var playEventFunction = function(){
       this.play();
       if (this.pauseOnMouseover)
         this.root.observe('mouseover', this.pause.bind(this)).observe('mouseout', this.play.bind(this));
-    }.bind(this));
+      
+      // only let window:loaded start the slideshow once
+      if (this.events.play == 'window:loaded')
+        document.stopObserving(this.events.play, playEventFunction);
+    }.bind(this);
+    document.observe(this.events.play, playEventFunction);
     
     this.fireEvent('initialized', { slideshow: this });
     
