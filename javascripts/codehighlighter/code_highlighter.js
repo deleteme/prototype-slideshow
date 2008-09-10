@@ -74,20 +74,23 @@ CodeHighlighter.addStyle = function(name, rules) {
   })
   
   function setEvent() {
+    
+    document.observe('dom:loaded', CodeHighlighter.init.bind(CodeHighlighter));
+    
     // set highlighter to run on load (use LowPro if present)
-    if (typeof Event != 'undefined' && typeof Event.onReady == 'function') 
-      return Event.onReady(CodeHighlighter.init.bind(CodeHighlighter));
-    
-    var old = window.onload;
-    
-    if (typeof window.onload != 'function') {
-      window.onload = function() { CodeHighlighter.init() };
-    } else {
-      window.onload = function() {
-        old();
-        CodeHighlighter.init();
-      }
-    }
+    // if (typeof Event != 'undefined' && typeof Event.onReady == 'function') 
+    //   return Event.onReady(CodeHighlighter.init.bind(CodeHighlighter));
+    // 
+    // var old = window.onload;
+    // 
+    // if (typeof window.onload != 'function') {
+    //   window.onload = function() { CodeHighlighter.init() };
+    // } else {
+    //   window.onload = function() {
+    //     old();
+    //     CodeHighlighter.init();
+    //   }
+    // }
   }
   
   // only set the event when the first style is added
