@@ -20,11 +20,19 @@
     });
     
     document.observe('dom:loaded', function(){
-      var button = $('startButton');
-      button.observe('click', function(){
-        button.fire('button:clicked');
-        button.insert({ after: '<p>button:clicked</p>' }).remove();
+      
+      Event.observe(window, 'load', function(){
+        
+        
+        
+        var button = $('startButton');
+        button.observe('click', function(){
+          button.fire('button:clicked');
+          button.insert({ after: '<p>button:clicked</p>' }).remove();
+        });
+        
       });
+      
     });
     
   </script>
@@ -63,8 +71,8 @@
 <body>
   
   <div id="head">
-    <h1>Custom Events Demo</h1>
-    <h4>Prototype listOfImages Class</h4>
+    <h1>Custom Events Demo 2</h1>
+    <h4>Prototype SlideShow Class</h4>
     <ul id="nav">
       <li><a href="../index.html">Return to Index of Demos</a></li>
       <li><a href="http://github.com/deleteme/prototype-listOfImages/wikis">View Project at Github</a></li>
