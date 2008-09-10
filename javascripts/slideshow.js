@@ -40,7 +40,15 @@ var SlideShow = Class.create({
     
     this.events = $H(this.defaultOptions.get('events')).merge(this.events).toObject();
     
-    if (this.autoPlay) document.observe(this.events.init, this.init.bind(this));
+    if (this.autoPlay) {
+      var initEventFunction = function(){
+        this.init();
+        // only allow the slideshow to observe one 'dom:loaded' event
+        if (this.events.init == 'dom:loaded')
+          document.stopObserving(this.events.init, initEventFunction);
+      }.bind(this);
+      document.observe(this.events.init, initEventFunction);
+    }
   },
   init: function(){
     if (!$(this.element)) return;
