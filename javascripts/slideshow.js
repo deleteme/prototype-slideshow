@@ -71,7 +71,6 @@ var SlideShow = Class.create({
     document.observe(this.events.play, playEventFunction);
     
     this.fireEvent('initialized', { slideshow: this });
-    
   },
   prep: function(){
     this.root.makePositioned();
@@ -88,9 +87,9 @@ var SlideShow = Class.create({
     return slide.setStyle({ display: 'none', opacity: 0 });
   },
   play: function(e){
-    // test 1: autoPlay true, pauseOnMouseover true
-    // test 2: autoPlay false, pauseOnMouseover true, (manually starting)
-    // test 3: autoPlay true, pauseOnMouseover false
+    // test 1: autoPlay true,  pauseOnMouseover true
+    // test 2: autoPlay false, pauseOnMouseover true,  (manually starting)
+    // test 3: autoPlay true,  pauseOnMouseover false
     // test 4: autoPlay false, pauseOnMouseover false, (manually starting)
     
     // prevent mousing out from causing the slideshow to start
