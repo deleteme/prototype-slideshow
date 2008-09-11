@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Prototype SlideShow Class / Simple Demo 1</title>
+  <script src="../javascripts/prototype.js" type="text/javascript"></script>
+  <script src="../javascripts/effects.js" type="text/javascript"></script>
+  <script src="../javascripts/codehighlighter/code_highlighter.js" type="text/javascript"></script>
+  <script src="../javascripts/codehighlighter/css.js" type="text/javascript"></script>
+  <script src="../javascripts/codehighlighter/html.js" type="text/javascript"></script>
+  <script src="../javascripts/codehighlighter/javascript.js" type="text/javascript"></script>
+  
+  <script src="../javascripts/slideshow.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    new SlideShow('listOfImages');
+  </script>
+  <link rel="stylesheet" href="../stylesheets/codehighlighter.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="../stylesheets/layout.css" type="text/css" media="screen" />
+  
+  <style type="text/css" media="screen">
+    
+    ul#listOfImages {
+      background: #e5e5e5;
+      height: 242px;
+      margin: 0;
+      padding: 0;
+      width: 242px;
+      position: relative;
+    }
+      
+      ul#listOfImages li {
+        display: block;
+        height: 242px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        text-align: center;
+        width: 242px;
+      }
+        
+        ul#listOfImages li img {
+          border: 1px solid #333;
+        }
+        
+  </style>
+</head>
+
+<body>
+  
+  <div id="head">
+    <h1>Simple Demo</h1>
+    <h4>Prototype SlideShow Class</h4>
+    <ul id="nav">
+      <li><a href="../index.html">Return to Index of Demos</a></li>
+      <li><a href="http://github.com/deleteme/prototype-slideshow/wikis">View Project at Github</a></li>
+    </ul>
+  </div>
+  
+  <div id="demo">
+  
+    <h2>Demo</h2>
+    
+    <ul id="listOfImages">
+      <li><img src="../images/red-mouse.jpg" alt="red mouse" /></li>
+      <li><img src="../images/yellow-bird.jpg" alt="yellow bird" /></li>
+      <li><img src="../images/green-frog.jpg" alt="green frog" /></li>
+    </ul>
+    
+  </div>
+  
+  <div id="code">
+    
+    <h2>Code</h2>
+    
+    <h5>JavaScript</h5>
+
+<pre><code class="javascript">
+  new SlideShow('listOfImages');
+</code></pre>
+    
+    <h5>HTML</h5>
+
+<pre><code class="html">
+&lt;ul id=&quot;listOfImages&quot;&gt;
+  &lt;li&gt;&lt;img src=&quot;../images/red-mouse.jpg&quot; alt=&quot;red mouse&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;img src=&quot;../images/yellow-bird.jpg&quot; alt=&quot;yellow bird&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;img src=&quot;../images/green-frog.jpg&quot; alt=&quot;green frog&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+
+    <h5>CSS</h5>
+  
+<pre><code class="css">
+ul#listOfImages {
+  background: #e5e5e5;
+  height: 242px;
+  margin: 0;
+  padding: 0;
+  width: 242px;
+  position: relative;
+}
+  
+  ul#listOfImages li {
+    display: block;
+    height: 242px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    width: 242px;
+  }
+    
+    ul#listOfImages li img {
+      border: 1px solid #333;
+    }
+</code></pre>
+  
+  </div>
+
+</body>
+</html>
