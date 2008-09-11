@@ -15,8 +15,10 @@
   <script src="../javascripts/slideshow.js" type="text/javascript"></script>
   <script type="text/javascript">
     var slideShow = new SlideShow('listOfImages', {
+      slideDuration: 1,
       afterFinish: function(){
         slideShow.remove();
+        slideShow = '';
       }
     });
   </script>

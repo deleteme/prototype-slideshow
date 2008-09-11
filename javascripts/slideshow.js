@@ -1,4 +1,4 @@
-var __debug = true;
+var __debug = false;
 /*
 
 
@@ -37,13 +37,13 @@ var SlideShow = Class.create({
     this.events = $H(this.defaultOptions.get('events')).merge(this.events).toObject();
     
     if (this.autoPlay) {
-      var initEventFunction = function(){
+      this.initEventFunction = function(){
         this.init();
         // only allow the slideshow to observe one 'dom:loaded' event
         if (this.events.init == 'dom:loaded')
-          document.stopObserving(this.events.init, initEventFunction);
+          document.stopObserving(this.events.init, this.initEventFunction);
       }.bind(this);
-      document.observe(this.events.init, initEventFunction);
+      document.observe(this.events.init, this.initEventFunction);
     }
   },
   init: function(){
@@ -59,16 +59,17 @@ var SlideShow = Class.create({
     
     this.prep();
     
-    var playEventFunction = function(){
+    this.playEventFunction = function(){
+      this.beforeStart();
       this.play();
       if (this.pauseOnMouseover)
         this.root.observe('mouseover', this.pause.bind(this)).observe('mouseout', this.play.bind(this));
       
       // only let window:loaded start the slideshow once
       if (this.events.play == 'window:loaded')
-        document.stopObserving(this.events.play, playEventFunction);
+        document.stopObserving(this.events.play, this.playEventFunction);
     }.bind(this);
-    document.observe(this.events.play, playEventFunction);
+    document.observe(this.events.play, this.playEventFunction);
     
     this.fireEvent('initialized', { slideshow: this });
   },
@@ -119,12 +120,16 @@ var SlideShow = Class.create({
   transition: function(){
     if (this.paused) return;
     if (this.nextTransition) this.nextTransition.stop();
-    // get slide after visible one, or 1st one if last is visible or none are visible
     
     this.coming = this.slides[this.slideIndex];
     this.going = this.coming.previous() || this.slides.last();
     
     var coming = this.coming; var going = this.going;
+    
+    if (this.loopCount > 1 && this.going == this.slides.last()) {
+      this.afterFinish();
+      return;
+    }
     
     // if not fresh start, fade
     if (going != coming) {
@@ -136,7 +141,7 @@ var SlideShow = Class.create({
             duration: this.transitionDuration,
             afterFinish: function(){
               this.prepSlide(going);
-              this.scheduleNextTransition();
+              this.afterTransitionEffect();
             }.bind(this)
           }
         );
@@ -147,7 +152,7 @@ var SlideShow = Class.create({
             this.prepSlide(going);
             coming.appear({
               duration: this.transitionDuration / 2,
-              afterFinish: this.scheduleNextTransition.bind(this)
+              afterFinish: this.afterTransitionEffect.bind(this)
             });
           }.bind(this)
         });
@@ -157,7 +162,7 @@ var SlideShow = Class.create({
     else {
       coming.appear({
         duration: this.transitionDuration / 2,
-        afterFinish: this.scheduleNextTransition.bind(this)
+        afterFinish: this.afterTransitionEffect.bind(this)
       });
     }
     
@@ -167,6 +172,9 @@ var SlideShow = Class.create({
     
     this.fireEvent('transitioned', { slideshow: this, coming: coming, going: going, loopCount: this.loopCount });
   },
+  afterTransitionEffect: function(){
+    this.scheduleNextTransition();
+  },
   scheduleNextTransition: function(){
     if (this.slideDuration <= 0) return;
     this.nextTransition = new PeriodicalExecuter(function(nextTransition){
@@ -175,7 +183,9 @@ var SlideShow = Class.create({
     }.bind(this), this.slideDuration);
   },
   abortNextTransition: function(){
-    if (this.nextTransition) this.nextTransition.stop();
+    if (this.nextTransition) {
+      this.nextTransition.stop();
+    }
   },
   fireEvent: function(name, memo){
     cl('SlideShow_' + this.root.id + ':' + name);
@@ -192,6 +202,15 @@ var SlideShow = Class.create({
     if (maxY == e.pointerY()) return false;
     if ($R(minX, maxX).include(e.pointerX()) && $R(minY, maxY).include(e.pointerY())) {
       return true; } else { return false; }
+  },
+  end: function(){
+    this.abortNextTransition();
+    document.stopObserving(this.events.play, this.playEventFunction);
+    document.stopObserving(this.events.init, this.initEventFunction);
+  },
+  remove: function(){
+    this.end();
+    this.root.remove();
   }
   /*,
   setupPausedTest: function(){
