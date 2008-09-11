@@ -1,4 +1,4 @@
-var __debug = false;
+var __debug = true;
 /*
 
 
@@ -8,10 +8,6 @@ EXAMPLE USAGE:
 
   new SlideShow('container', { slideDuration: 2 });
 
-*/
-
-/*
-  TODO make the default slideshow class use dom:loaded and window:loaded custom events
 */
 
 /*
