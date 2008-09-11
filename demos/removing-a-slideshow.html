@@ -16,6 +16,7 @@
   <script type="text/javascript">
     var slideShow = new SlideShow('listOfImages', {
       slideDuration: 1,
+      loop: false,
       afterFinish: function(){
         slideShow.remove();
         slideShow = '';
@@ -84,7 +85,14 @@
     <h5>JavaScript</h5>
 
 <pre><code class="javascript">
-  new SlideShow('listOfImages');
+var slideShow = new SlideShow('listOfImages', {
+  slideDuration: 1,
+  loop: false,
+  afterFinish: function(){
+    slideShow.remove();
+    slideShow = '';
+  }
+});
 </code></pre>
     
     <h5>HTML</h5>

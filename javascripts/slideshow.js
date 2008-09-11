@@ -11,7 +11,7 @@ EXAMPLE USAGE:
 */
 
 /*
-  TODO add a way to delete or remove a slideshow
+  TODO add a way to delete or remove a slideShow
 */
 var SlideShow = Class.create({
   initialize: function(element, options){
@@ -39,7 +39,7 @@ var SlideShow = Class.create({
     if (this.autoPlay) {
       this.initEventFunction = function(){
         this.init();
-        // only allow the slideshow to observe one 'dom:loaded' event
+        // only allow the slideShow to observe one 'dom:loaded' event
         if (this.events.init == 'dom:loaded')
           document.stopObserving(this.events.init, this.initEventFunction);
       }.bind(this);
@@ -50,9 +50,10 @@ var SlideShow = Class.create({
     if (!$(this.element)) return;
     this.root = $(this.element);
     this.id = this.root.identify();
-    this.fireEvent('initializing', { slideshow: this });
+    this.fireEvent('initializing', { slideShow: this });
     this.slides = $$('#' + new String(this.id) + ' ' + new String(this.slidesSelector));
     this.loopCount = 0;
+    this.slideCount = 0;
     this.slideIndex = 0;
     this.paused = false;
     this.started = false;
@@ -65,13 +66,13 @@ var SlideShow = Class.create({
       if (this.pauseOnMouseover)
         this.root.observe('mouseover', this.pause.bind(this)).observe('mouseout', this.play.bind(this));
       
-      // only let window:loaded start the slideshow once
+      // only let window:loaded start the slideShow once
       if (this.events.play == 'window:loaded')
         document.stopObserving(this.events.play, this.playEventFunction);
     }.bind(this);
     document.observe(this.events.play, this.playEventFunction);
     
-    this.fireEvent('initialized', { slideshow: this });
+    this.fireEvent('initialized', { slideShow: this });
   },
   prep: function(){
     this.root.makePositioned();
@@ -82,7 +83,7 @@ var SlideShow = Class.create({
       });
     };
     
-    this.fireEvent('prepped', { slideshow: this });
+    this.fireEvent('prepped', { slideShow: this });
   },
   prepSlide: function(slide){
     return slide.setStyle({ display: 'none', opacity: 0 });
@@ -93,7 +94,7 @@ var SlideShow = Class.create({
     // test 3: autoPlay true,  pauseOnMouseover false
     // test 4: autoPlay false, pauseOnMouseover false, (manually starting)
     
-    // prevent mousing out from causing the slideshow to start
+    // prevent mousing out from causing the slideShow to start
     if (e && !this.autoPlay && this.pauseOnMouseover && this.loopCount == 0) return;
     
     // if (this.paused) return;
@@ -102,7 +103,7 @@ var SlideShow = Class.create({
     
     this.started = true;
     this.paused = false;
-    this.fireEvent('started', { slideshow: this });
+    this.fireEvent('started', { slideShow: this });
     this.transition();
   },
   pause: function(e){
@@ -115,7 +116,7 @@ var SlideShow = Class.create({
     // queue paused test
     // this.setupPausedTest();
     
-    this.fireEvent('paused', { slideshow: this });
+    this.fireEvent('paused', { slideShow: this });
   },
   transition: function(){
     if (this.paused) return;
@@ -126,10 +127,16 @@ var SlideShow = Class.create({
     
     var coming = this.coming; var going = this.going;
     
-    if (this.loopCount > 1 && this.going == this.slides.last()) {
+    if (this.slideCount > 0 && this.coming == this.slides.first() && this.going == this.slides.last()) {
+      this.fireEvent('looped', { slideShow: this });
+      this.loopCount++;
       this.afterFinish();
-      return;
+      if (!this.loop) return;
     }
+    
+    this.slideCount++;
+    this.slideIndex++;
+    if (this.slideIndex >= this.slides.length) this.slideIndex = 0;
     
     // if not fresh start, fade
     if (going != coming) {
@@ -165,12 +172,7 @@ var SlideShow = Class.create({
         afterFinish: this.afterTransitionEffect.bind(this)
       });
     }
-    
-    this.loopCount++;
-    this.slideIndex++;
-    if (this.loop && this.slideIndex >= this.slides.length) this.slideIndex = 0;
-    
-    this.fireEvent('transitioned', { slideshow: this, coming: coming, going: going, loopCount: this.loopCount });
+    this.fireEvent('transitioned', { slideShow: this, coming: coming, going: going, loopCount: this.loopCount });
   },
   afterTransitionEffect: function(){
     this.scheduleNextTransition();
