@@ -9,7 +9,12 @@ EXAMPLE USAGE:
   new SlideShow('container', { slideDuration: 2 });
 
 */
-
+/*
+  TODO add an option so that the first slide starts visible, instead of fading in
+*/
+/*
+  TODO pauseOnMouseover doesn't respect the slideDuration
+*/
 /*
   TODO add a way to delete or remove a slideShow
 */
@@ -200,8 +205,7 @@ var SlideShow = Class.create({
     var minY = this.root.cumulativeOffset().top;
     
     // for whatever reason the minX and the maxY need to be checked like this
-    if (minX == e.pointerX()) return false;
-    if (maxY == e.pointerY()) return false;
+    if (minX == e.pointerX() || maxY == e.pointerY()) return false;
     if ($R(minX, maxX).include(e.pointerX()) && $R(minY, maxY).include(e.pointerY())) {
       return true; } else { return false; }
   },
