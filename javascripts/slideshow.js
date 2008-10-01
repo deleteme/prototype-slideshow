@@ -30,6 +30,7 @@ var SlideShow = Class.create({
       crossFade: false,
       pauseOnMouseover: true,
       slidesSelector: '> *',
+      startHidden: true,
       events: { init: 'dom:loaded', play: 'window:loaded' },
       beforeStart: function(){}, afterFinish: function(){}
     });
@@ -83,11 +84,10 @@ var SlideShow = Class.create({
     this.root.makePositioned();
     
     for (var i=0; i < this.slides.length; i++) {
-      this.prepSlide(this.slides[i]).setStyle({
-        position: 'absolute', zIndex: i
-      });
+      this.slides[i].setStyle({ position: 'absolute', zIndex: i });
+      if (this.startHidden) this.prepSlide(this.slides[i]);
+      if (!this.startHidden && i != 0) this.prepSlide(this.slides[i]);
     };
-    
     this.fireEvent('prepped', { slideShow: this });
   },
   prepSlide: function(slide){
