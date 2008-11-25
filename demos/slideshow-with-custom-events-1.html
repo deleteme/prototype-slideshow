@@ -21,7 +21,8 @@
     
     document.observe('dom:loaded', function(){
       $('startButton').observe('click', function(e){
-        e.element().fire(myCustomEvent).insert({ after: '<p>' + myCustomEvent + '</p>' }).remove();
+        e.element().fire(myCustomEvent);
+        e.element().insert({ after: '<p>' + myCustomEvent + '</p>' }).remove();
       });
     });
     
@@ -97,7 +98,8 @@ new SlideShow(&#x27;listOfImages&#x27;, { events: { play: &#x27;button:clicked&#
 
 document.observe(&#x27;dom:loaded&#x27;, function(){
   $(&#x27;startButton&#x27;).observe(&#x27;click&#x27;, function(e){
-    e.element().fire(myCustomEvent).insert({ after: &#x27;&lt;p&gt;&#x27; + myCustomEvent + &#x27;&lt;/p&gt;&#x27; }).remove();
+    e.element().fire(myCustomEvent);
+    e.element().insert({ after: &#x27;&lt;p&gt;&#x27; + myCustomEvent + &#x27;&lt;/p&gt;&#x27; }).remove();
   });
 });
 
