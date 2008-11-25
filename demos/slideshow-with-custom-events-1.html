@@ -15,15 +15,13 @@
   <script src="../javascripts/slideshow.js" type="text/javascript"></script>
   <script type="text/javascript">
     
-    new SlideShow('listOfImages', {
-      events: { play: 'button:clicked' }
-    });
+    var myCustomEvent = 'button:clicked';
+    
+    new SlideShow('listOfImages', { events: { play: 'button:clicked' } });
     
     document.observe('dom:loaded', function(){
-      var button = $('startButton');
-      button.observe('click', function(){
-        button.fire('button:clicked');
-        button.insert({ after: '<p>button:clicked</p>' }).remove();
+      $('startButton').observe('click', function(e){
+        e.element().fire(myCustomEvent).insert({ after: '<p>' + myCustomEvent + '</p>' }).remove();
       });
     });
     
@@ -92,17 +90,17 @@
     <h5>JavaScript</h5>
 
 <pre><code class="javascript">
-new SlideShow('listOfImages', {
-  events: { play: 'button:clicked' }
-});
 
-document.observe('dom:loaded', function(){
-  var button = $('startButton');
-  button.observe('click', function(){
-    button.fire('button:clicked');
-    button.insert({ after: '&lt;p&gt;button:clicked&lt;/p&gt;' }).remove();
+var myCustomEvent = &#x27;button:clicked&#x27;;
+
+new SlideShow(&#x27;listOfImages&#x27;, { events: { play: &#x27;button:clicked&#x27; } });
+
+document.observe(&#x27;dom:loaded&#x27;, function(){
+  $(&#x27;startButton&#x27;).observe(&#x27;click&#x27;, function(e){
+    e.element().fire(myCustomEvent).insert({ after: &#x27;&lt;p&gt;&#x27; + myCustomEvent + &#x27;&lt;/p&gt;&#x27; }).remove();
   });
 });
+
 </code></pre>
     
     <h5>HTML</h5>
