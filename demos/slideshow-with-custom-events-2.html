@@ -29,7 +29,7 @@
       // setup DOM
       [$('sequenceOfImages'), $('description'), $('startButton')].invoke('hide');
       var frames = $A();
-      var frameTemplate = new Template('<img src="http://homepage.mac.com/mattgarrett/dinner/dinner#{number}.jpg" />');
+      var frameTemplate = new Template('<img src="http://dl.getdropbox.com/u/154684/food/dinner#{number}.jpg" />');
       $R(0, 144).each(function(n){
         var blockSize = 4;
         var leadingZeros = blockSize - n.toString().length;
@@ -44,10 +44,9 @@
         $('sequenceOfImages').show();
         $('description').show();
         $('status').hide();
-        var button = $('startButton').show();
-        button.observe('click', function(){
-          button.fire('button:clicked');
-          button.insert({ after: '<p>button:clicked</p>' }).remove();
+        $('startButton').show().observe('click', function(e){
+          e.element().fire('button:clicked');
+          e.element().insert({ after: '<p>button:clicked</p>' }).remove();
         });
       });
       
@@ -111,43 +110,45 @@
     <h5>JavaScript</h5>
 
 <pre><code class="javascript">
+
 // setup SlideShow class
-new SlideShow('sequenceOfImages', {
+new SlideShow(&#x27;sequenceOfImages&#x27;, {
   slideDuration: .125,
   transitionDuration: 0,
   crossFade: true,
   loop: true,
-  events: { init: 'slides:loaded', play: 'button:clicked' }
+  events: { init: &#x27;slides:loaded&#x27;, play: &#x27;button:clicked&#x27; }
 });
 
-document.observe('dom:loaded', function(){
+document.observe(&#x27;dom:loaded&#x27;, function(){
   
   // setup DOM
-  [$('sequenceOfImages'), $('description'), $('startButton')].invoke('hide');
+  [$(&#x27;sequenceOfImages&#x27;), $(&#x27;description&#x27;), $(&#x27;startButton&#x27;)].invoke(&#x27;hide&#x27;);
   var frames = $A();
-  var frameTemplate = new Template('&lt;img src=&quot;http://homepage.mac.com/mattgarrett/dinner/dinner#{number}.jpg&quot; /&gt;');
+  var frameTemplate = new Template(&#x27;&lt;img src=&quot;http://dl.getdropbox.com/u/154684/food/dinner#{number}.jpg&quot; /&gt;&#x27;);
   $R(0, 144).each(function(n){
     var blockSize = 4;
     var leadingZeros = blockSize - n.toString().length;
-    frames.push(frameTemplate.evaluate({ number: '0'.times(leadingZeros) + n }));
+    frames.push(frameTemplate.evaluate({ number: &#x27;0&#x27;.times(leadingZeros) + n }));
   });
-  $('sequenceOfImages').insert(frames.join(''));
+  $(&#x27;sequenceOfImages&#x27;).insert(frames.join(&#x27;&#x27;));
   
   
   // when images are done loading
-  Event.observe(window, 'load', function(){
-    document.fire('slides:loaded');
-    $('sequenceOfImages').show();
-    $('description').show();
-    $('status').hide();
-    var button = $('startButton').show();
-    button.observe('click', function(){
-      button.fire('button:clicked');
-      button.insert({ after: '&lt;p&gt;button:clicked&lt;/p&gt;' }).remove();
+  Event.observe(window, &#x27;load&#x27;, function(){
+    document.fire(&#x27;slides:loaded&#x27;);
+    $(&#x27;sequenceOfImages&#x27;).show();
+    $(&#x27;description&#x27;).show();
+    $(&#x27;status&#x27;).hide();
+    $(&#x27;startButton&#x27;).show().observe(&#x27;click&#x27;, function(e){
+      e.element().fire(&#x27;button:clicked&#x27;);
+      e.element().insert({ after: &#x27;&lt;p&gt;button:clicked&lt;/p&gt;&#x27; }).remove();
     });
   });
   
 });
+
+
 </code></pre>
     
     <h5>HTML</h5>
