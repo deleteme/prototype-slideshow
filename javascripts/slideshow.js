@@ -1,4 +1,4 @@
-var __debug = true;
+var __debug = false;
 /*
 
 
@@ -33,7 +33,7 @@ var SlideShow = Class.create({
       slidesSelector: '> *',
       startHidden: true,
       events: { init: 'dom:loaded', play: 'window:loaded' },
-      beforeStart: function(){}, afterFinish: function(){}
+      beforeStart: Prototype.emptyFunction, afterFinish: Prototype.emptyFunction
     });
     
     // assigning the options to internal variables
@@ -59,7 +59,7 @@ var SlideShow = Class.create({
     this.root = $(this.element);
     this.id = this.root.identify();
     this.fireEvent('initializing', { slideShow: this });
-    this.slides = $$('#' + new String(this.id) + ' ' + new String(this.slidesSelector));
+    this.slides = $$('#' + String(this.id) + ' ' + String(this.slidesSelector));
     this.loopCount = 0;
     this.slideCount = 0;
     this.slideIndex = 0;
