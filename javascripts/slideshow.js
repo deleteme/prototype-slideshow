@@ -211,10 +211,11 @@ var SlideShow = Class.create({
   },
   
   mouseIsWithinSlideArea: function(e){
-    var maxX = this.root.cumulativeOffset().left + this.root.getWidth();
-    var minX = this.root.cumulativeOffset().left;
-    var maxY = this.root.cumulativeOffset().top + this.root.getHeight();
-    var minY = this.root.cumulativeOffset().top;
+    var offsets = this.root.cumulativeOffset();
+    var maxX = offsets.left + this.root.getWidth();
+    var minX = offsets.left;
+    var maxY = offsets.top + this.root.getHeight();
+    var minY = offsets.top;
     
     // for whatever reason the minX and the maxY need to be checked like this
     if (minX == e.pointerX() || maxY == e.pointerY()) return false;
