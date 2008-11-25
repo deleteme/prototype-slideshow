@@ -1,5 +1,5 @@
-/*  Prototype JavaScript framework, version 1.6.0.2
- *  (c) 2005-2007 Sam Stephenson
+/*  Prototype JavaScript framework, version 1.6.0.3
+ *  (c) 2005-2008 Sam Stephenson
  *
  *  Prototype is freely distributable under the terms of an MIT-style license.
  *  For details, see the Prototype web site: http://www.prototypejs.org/
@@ -7,13 +7,15 @@
  *--------------------------------------------------------------------------*/
 
 var Prototype = {
-  Version: '1.6.0.2',
+  Version: '1.6.0.3',
 
   Browser: {
-    IE:     !!(window.attachEvent && !window.opera),
-    Opera:  !!window.opera,
+    IE:     !!(window.attachEvent &&
+      navigator.userAgent.indexOf('Opera') === -1),
+    Opera:  navigator.userAgent.indexOf('Opera') > -1,
     WebKit: navigator.userAgent.indexOf('AppleWebKit/') > -1,
-    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 && navigator.userAgent.indexOf('KHTML') == -1,
+    Gecko:  navigator.userAgent.indexOf('Gecko') > -1 &&
+      navigator.userAgent.indexOf('KHTML') === -1,
     MobileSafari: !!navigator.userAgent.match(/Apple.*Mobile.*Safari/)
   },
 
@@ -27,7 +29,7 @@ var Prototype = {
         document.createElement('form')['__proto__']
   },
 
-  ScriptFragment: '<script[^>]*>([^\\x00]*?)<\/script>',
+  ScriptFragment: '<script[^>]*>([\\S\\s]*?)<\/script>',
   JSONFilter: /^\/\*-secure-([\s\S]*)\*\/\s*$/,
 
   emptyFunction: function() { },
@@ -84,12 +86,13 @@ Class.Methods = {
       var property = properties[i], value = source[property];
       if (ancestor && Object.isFunction(value) &&
           value.argumentNames().first() == "$super") {
-        var method = value, value = Object.extend((function(m) {
+        var method = value;
+        value = (function(m) {
           return function() { return ancestor[m].apply(this, arguments) };
-        })(property).wrap(method), {
-          valueOf:  function() { return method },
-          toString: function() { return method.toString() }
-        });
+        })(property).wrap(method);
+
+        value.valueOf = method.valueOf.bind(method);
+        value.toString = method.toString.bind(method);
       }
       this.prototype[property] = value;
     }
@@ -168,7 +171,7 @@ Object.extend(Object, {
   },
 
   isElement: function(object) {
-    return object && object.nodeType == 1;
+    return !!(object && object.nodeType == 1);
   },
 
   isArray: function(object) {
@@ -181,7 +184,7 @@ Object.extend(Object, {
   },
 
   isFunction: function(object) {
-    return typeof object == "function" && typeof object.call == "function";
+    return typeof object == "function";
   },
 
   isString: function(object) {
@@ -387,18 +390,13 @@ Object.extend(String.prototype, {
     return this.replace(new RegExp(Prototype.ScriptFragment, 'img'), '');
   },
 
-  extractScripts: (function() {
-  	var matchAll = new RegExp(Prototype.ScriptFragment, 'ig');
-    var matchOne = new RegExp(Prototype.ScriptFragment, 'i');
-    var matchComments = new RegExp('<!--\\s*' + Prototype.ScriptFragment + '\\s*-->', 'i');
-
-  	return function() {
-      if (this.indexOf('<script') == -1) return [];
-      return (this.replace(matchComments, '').match(matchAll) || []).map(function(scriptTag) {
-        return (scriptTag.match(matchOne) || ['', ''])[1];
-      });
-    }
-  })(),
+  extractScripts: function() {
+    var matchAll = new RegExp(Prototype.ScriptFragment, 'img');
+    var matchOne = new RegExp(Prototype.ScriptFragment, 'im');
+    return (this.match(matchAll) || []).map(function(scriptTag) {
+      return (scriptTag.match(matchOne) || ['', ''])[1];
+    });
+  },
 
   evalScripts: function() {
     return this.extractScripts().map(function(script) { return eval(script) });
@@ -407,16 +405,14 @@ Object.extend(String.prototype, {
   escapeHTML: function() {
     var self = arguments.callee;
     self.text.data = this;
-    return self.container.innerHTML.replace(/"/g, '&quot;');
+    return self.div.innerHTML;
   },
 
   unescapeHTML: function() {
     var div = new Element('div');
-    // Safari requires the text nested inside another element to render correctly
-    div.innerHTML = '<pre>' + this.stripTags() + '</pre>';
-    div = div.firstChild;
+    div.innerHTML = this.stripTags();
     return div.childNodes[0] ? (div.childNodes.length > 1 ?
-      $A(div.childNodes).inject('', function(memo, node) { return memo + node.nodeValue }) :
+      $A(div.childNodes).inject('', function(memo, node) { return memo+node.nodeValue }) :
       div.childNodes[0].nodeValue) : '';
   },
 
@@ -537,6 +533,15 @@ Object.extend(String.prototype, {
   }
 });
 
+if (Prototype.Browser.WebKit || Prototype.Browser.IE) Object.extend(String.prototype, {
+  escapeHTML: function() {
+    return this.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  },
+  unescapeHTML: function() {
+    return this.stripTags().replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  }
+});
+
 String.prototype.gsub.prepareReplacement = function(replacement) {
   if (Object.isFunction(replacement)) return replacement;
   var template = new Template(replacement);
@@ -546,39 +551,11 @@ String.prototype.gsub.prepareReplacement = function(replacement) {
 String.prototype.parseQuery = String.prototype.toQueryParams;
 
 Object.extend(String.prototype.escapeHTML, {
-  container: document.createElement('pre'),
+  div:  document.createElement('div'),
   text: document.createTextNode('')
 });
 
-String.prototype.escapeHTML.container.appendChild(String.prototype.escapeHTML.text);
-
-if (Prototype.Browser.IE)
-  // IE converts all newlines to carriage returns so we swap them back
-  String.prototype.unescapeHTML = String.prototype.unescapeHTML.wrap(function(proceed) {
-    return proceed().replace(/\r/g, '\n')
-  });
-
-if (Prototype.Browser.WebKit && Prototype.BrowserFeatures.SelectorsAPI)
-  // Safari 3.x has issues with escaping the ">" character
-  (function() {
-    var escapeHTML = String.prototype.escapeHTML;
-    Object.extend(
-      String.prototype.escapeHTML = escapeHTML.wrap(function(proceed) {
-        return proceed().replace(/>/g, "&gt;")
-      }), {
-      container: escapeHTML.container,
-      text: escapeHTML.text
-    })
-  })();
-
-if ('&'.escapeHTML() !== '&amp;') {
-  // Safari 2.x has issues with escaping html inside a "pre" element so we use the deprecated "xmp" element instead
-  Object.extend(String.prototype.escapeHTML, {
-    container: document.createElement('xmp'),
-    text: document.createTextNode('')
-  });
-  String.prototype.escapeHTML.container.appendChild(String.prototype.escapeHTML.text);
-}
+String.prototype.escapeHTML.div.appendChild(String.prototype.escapeHTML.text);
 
 var Template = Class.create({
   initialize: function(template, pattern) {
@@ -718,7 +695,7 @@ var Enumerable = {
   inGroupsOf: function(number, fillWith) {
     fillWith = Object.isUndefined(fillWith) ? null : fillWith;
     return this.eachSlice(number, function(slice) {
-      while (slice.length < number) slice.push(fillWith);
+      while(slice.length < number) slice.push(fillWith);
       return slice;
     });
   },
@@ -843,8 +820,12 @@ function $A(iterable) {
 if (Prototype.Browser.WebKit) {
   $A = function(iterable) {
     if (!iterable) return [];
-    if (!(Object.isFunction(iterable) && iterable == '[object NodeList]') &&
-        iterable.toArray) return iterable.toArray();
+    // In Safari, only use the `toArray` method if it's not a NodeList.
+    // A NodeList is a function, has an function `item` property, and a numeric
+    // `length` property. Adapted from Google Doctype.
+    if (!(typeof iterable === 'function' && typeof iterable.length ===
+        'number' && typeof iterable.item === 'function') && iterable.toArray)
+      return iterable.toArray();
     var length = iterable.length || 0, results = new Array(length);
     while (length--) results[length] = iterable[length];
     return results;
@@ -913,11 +894,8 @@ Object.extend(Array.prototype, {
   },
 
   intersect: function(array) {
-    var length = array.length, i;
     return this.uniq().findAll(function(item) {
-      i = length;
-      while (i--) if (item === array[i]) return true;
-      return false;
+      return array.detect(function(value) { return item === value });
     });
   },
 
@@ -1042,7 +1020,9 @@ var Hash = Class.create(Enumerable, (function() {
     },
 
     get: function(key) {
-      return this._object[key];
+      // simulating poorly supported hasOwnProperty
+      if (this._object[key] !== Object.prototype[key])
+        return this._object[key];
     },
 
     unset: function(key) {
@@ -1141,25 +1121,11 @@ var $R = function(start, end, exclusive) {
 
 var Ajax = {
   getTransport: function() {
-    var transport = false;
-    Ajax.getTransport = Try.these(
-      function() {
-        /* fallback on activex xmlhttp to avoid IE7 local file-system read error */
-        if (Prototype.Browser.IE && window.location.href.indexOf('file://') == 0) throw 'skip';
-        transport = new XMLHttpRequest();
-        return function(){ return new XMLHttpRequest()}
-      },
-      function() {
-        transport = new ActiveXObject('Msxml2.XMLHTTP');
-        return function(){ return new ActiveXObject('Msxml2.XMLHTTP')}
-      },
-      function() {
-        transport = new ActiveXObject('Microsoft.XMLHTTP');
-        return function(){ return new ActiveXObject('Microsoft.XMLHTTP')}
-      }
+    return Try.these(
+      function() {return new XMLHttpRequest()},
+      function() {return new ActiveXObject('Msxml2.XMLHTTP')},
+      function() {return new ActiveXObject('Microsoft.XMLHTTP')}
     ) || false;
-
-    return transport;
   },
 
   activeRequestCount: 0
@@ -1201,7 +1167,6 @@ Ajax.Responders.register({
 
 Ajax.Base = Class.create({
   initialize: function(options) {
-    this.allowStatusZero = false;
     this.options = {
       method:       'post',
       asynchronous: true,
@@ -1231,69 +1196,52 @@ Ajax.Request = Class.create(Ajax.Base, {
     this.request(url);
   },
 
-  request: (function() {
+  request: function(url) {
+    this.url = url;
+    this.method = this.options.method;
+    var params = Object.clone(this.options.parameters);
 
-    var absoluteExp = /^[a-z]{3,5}:/, fileExp = /^(file|ftp):/;
-    function isRelative(url) {
-      return !absoluteExp.test(url);
+    if (!['get', 'post'].include(this.method)) {
+      // simulate other verbs over post
+      params['_method'] = this.method;
+      this.method = 'post';
     }
 
-    function isFileProtocol(url) {
-      return fileExp.test(url);
-    }
+    this.parameters = params;
 
-    return function(url) {
-      var base;
-      if (Prototype.Browser.Opera && opera.version() < 9.5 &&
-          isRelative(url) && (base = $(document.documentElement).down('base')))
-        url = base.readAttribute('href') + url;
-
-      this.url = url;
-      this.method = this.options.method;
-      var params = Object.clone(this.options.parameters);
-      this.allowStatusZero = isFileProtocol(this.url) ||
-        (isRelative(url) && isFileProtocol(window.location.protocol));
-
-      if (!['get', 'post'].include(this.method)) {
-        // simulate other verbs over post
-        params['_method'] = this.method;
-        this.method = 'post';
-      }
-
-      this.parameters = params;
-
-      if (params = Object.toQueryString(params)) {
+    if (params = Object.toQueryString(params)) {
+      // when GET, append parameters to URL
+      if (this.method == 'get')
         this.url += (this.url.include('?') ? '&' : '?') + params;
-        if (this.method == 'post' &&
-            /Konqueror|Safari|KHTML/.test(navigator.userAgent))
-          params += '&_=';
-      }
-
-      try {
-        var response = new Ajax.Response(this);
-        if (this.options.onCreate) this.options.onCreate(response);
-        Ajax.Responders.dispatch('onCreate', this, response);
-
-        this.transport.open(this.method.toUpperCase(), this.url,
-          this.options.asynchronous);
-
-        if (this.options.asynchronous) this.respondToReadyState.bind(this).defer(1);
-
-        this.transport.onreadystatechange = this.onStateChange.bind(this);
-        this.setRequestHeaders();
-
-        this.body = this.method == 'post' ? (this.options.postBody || params) : null;
-        this.transport.send(this.body);
-
-        /* Force Firefox to handle ready state 4 for synchronous requests */
-        if (!this.options.asynchronous && this.transport.overrideMimeType)
-          this.onStateChange();
-      }
-      catch (e) {
-        this.dispatchException(e);
-      }
+      else if (/Konqueror|Safari|KHTML/.test(navigator.userAgent))
+        params += '&_=';
     }
-  })(),
+
+    try {
+      var response = new Ajax.Response(this);
+      if (this.options.onCreate) this.options.onCreate(response);
+      Ajax.Responders.dispatch('onCreate', this, response);
+
+      this.transport.open(this.method.toUpperCase(), this.url,
+        this.options.asynchronous);
+
+      if (this.options.asynchronous) this.respondToReadyState.bind(this).defer(1);
+
+      this.transport.onreadystatechange = this.onStateChange.bind(this);
+      this.setRequestHeaders();
+
+      this.body = this.method == 'post' ? (this.options.postBody || params) : null;
+      this.transport.send(this.body);
+
+      /* Force Firefox to handle ready state 4 for synchronous requests */
+      if (!this.options.asynchronous && this.transport.overrideMimeType)
+        this.onStateChange();
+
+    }
+    catch (e) {
+      this.dispatchException(e);
+    }
+  },
 
   onStateChange: function() {
     var readyState = this.transport.readyState;
@@ -1338,7 +1286,7 @@ Ajax.Request = Class.create(Ajax.Base, {
 
   success: function() {
     var status = this.getStatus();
-    return (!status && this.allowStatusZero) || (status >= 200 && status < 300);
+    return !status || (status >= 200 && status < 300);
   },
 
   getStatus: function() {
@@ -1418,14 +1366,14 @@ Ajax.Response = Class.create({
     var transport  = this.transport  = request.transport,
         readyState = this.readyState = transport.readyState;
 
-    if ((readyState > 2 && !Prototype.Browser.IE) || readyState == 4) {
+    if((readyState > 2 && !Prototype.Browser.IE) || readyState == 4) {
       this.status       = this.getStatus();
       this.statusText   = this.getStatusText();
       this.responseText = String.interpret(transport.responseText);
       this.headerJSON   = this._getHeaderJSON();
     }
 
-    if (readyState == 4) {
+    if(readyState == 4) {
       var xml = transport.responseXML;
       this.responseXML  = Object.isUndefined(xml) ? null : xml;
       this.responseJSON = this._getResponseJSON();
@@ -1485,22 +1433,6 @@ Ajax.Response = Class.create({
     }
   }
 });
-
-if (Prototype.Browser.Gecko) {
-  // Fix for Firefox 1.5 cross sub-domain bug
-  (function(p) {
-    p.initialize = p.initialize.wrap(function(proceed, request) {
-      proceed(request);
-      var t = this.transport;
-      if (t.responseXML)
-        try {
-          t.responseXML.firstChild;
-        } catch (e) {
-          this.responseXML = (new DOMParser).parseFromString(t.responseText, "text/xml");
-        }
-    });
-  })(Ajax.Response.prototype);
-}
 
 Ajax.Updater = Class.create(Ajax.Request, {
   initialize: function($super, container, url, options) {
@@ -1628,12 +1560,10 @@ if (!Node.ELEMENT_NODE) {
     attributes = attributes || { };
     tagName = tagName.toLowerCase();
     var cache = Element.cache;
-    if (Prototype.Browser.IE && (attributes.name || attributes.type)) {
-	  tagName = '<' + tagName +
-	    (attributes.name ? ' name="' + attributes.name + '"' : '') +
-	      (attributes.type ? ' type="' + attributes.type + '"' : '') + '>';
-	  delete attributes.name; delete attributes.type;
-	  return Element.writeAttribute(document.createElement(tagName), attributes);
+    if (Prototype.Browser.IE && attributes.name) {
+      tagName = '<' + tagName + ' name="' + attributes.name + '">';
+      delete attributes.name;
+      return Element.writeAttribute(document.createElement(tagName), attributes);
     }
     if (!cache[tagName]) cache[tagName] = Element.extend(document.createElement(tagName));
     return Element.writeAttribute(cache[tagName].cloneNode(false), attributes);
@@ -1657,19 +1587,13 @@ Element.Methods = {
 
   hide: function(element) {
     element = $(element);
-    var originalDisplay = element.style.display;
-    if (originalDisplay && originalDisplay != 'none')
-      element._originalDisplay = originalDisplay;
     element.style.display = 'none';
     return element;
   },
 
   show: function(element) {
     element = $(element);
-    if (element._originalDisplay) {
-      element.style.display = element._originalDisplay;
-      element._originalDisplay = null;
- 	} else element.style.display = '';
+    element.style.display = '';
     return element;
   },
 
@@ -1863,26 +1787,15 @@ Element.Methods = {
 
   readAttribute: function(element, name) {
     element = $(element);
-    var t = Element._attributeTranslations.read;
-    if (t.names[name]) name = t.names[name];
-
     if (Prototype.Browser.IE) {
       var t = Element._attributeTranslations.read;
-      // If we're reading from a form, avoid a conflict between an attribute
-      // and a child name.
-      if (element.tagName.toUpperCase() == 'FORM' &&
-        !/^((child|parent)Node|(next|previous)Sibling)$/.test(name) &&
-          element.children[name]){
-        element = $(element.cloneNode(false));
-      }
       if (t.values[name]) return t.values[name](element, name);
       if (t.names[name]) name = t.names[name];
       if (name.include(':')) {
         return (!element.attributes || !element.attributes[name]) ? null :
          element.attributes[name].value;
       }
-    } else if (t.values[name]) return t.values[name](element, name);
-
+    }
     return element.getAttribute(name);
   },
 
@@ -1896,7 +1809,7 @@ Element.Methods = {
     for (var attr in attributes) {
       name = t.names[attr] || attr;
       value = attributes[attr];
-      if (t.values[name]) name = t.values[name](element, value);
+      if (t.values[attr]) name = t.values[attr](element, value);
       if (value === false || value === null)
         element.removeAttribute(name);
       else if (value === true)
@@ -2056,7 +1969,7 @@ Element.Methods = {
       element.style.position = 'relative';
       // Opera returns the offset relative to the positioning context, when an
       // element is position relative but top and left have not been defined
-      if (window.opera) {
+      if (Prototype.Browser.Opera) {
         element.style.top = 0;
         element.style.left = 0;
       }
@@ -2095,7 +2008,6 @@ Element.Methods = {
   },
 
   cumulativeOffset: function(element) {
-    element = $(element);
     var valueT = 0, valueL = 0;
     do {
       valueT += element.offsetTop  || 0;
@@ -2106,7 +2018,6 @@ Element.Methods = {
   },
 
   positionedOffset: function(element) {
-    element = $(element);
     var valueT = 0, valueL = 0;
     do {
       valueT += element.offsetTop  || 0;
@@ -2126,28 +2037,22 @@ Element.Methods = {
     if (element.getStyle('position') == 'absolute') return element;
     // Position.prepare(); // To be done manually by Scripty when it needs it.
 
-    var offsets = element.positionedOffset(),
-    dimensions = element.getDimensions(),
-    top = offsets[1],
-    left = offsets[0],
-    width = dimensions.width,
-    height = dimensions.height;
+    var offsets = element.positionedOffset();
+    var top     = offsets[1];
+    var left    = offsets[0];
+    var width   = element.clientWidth;
+    var height  = element.clientHeight;
 
-    Object.extend(element, {
-      _originalLeft:   left - parseFloat(element.style.left  || 0),
-      _originalTop:    top  - parseFloat(element.style.top || 0),
-      _originalWidth:  element.style.width,
-      _originalHeight: element.style.height
-    });
+    element._originalLeft   = left - parseFloat(element.style.left  || 0);
+    element._originalTop    = top  - parseFloat(element.style.top || 0);
+    element._originalWidth  = element.style.width;
+    element._originalHeight = element.style.height;
 
-    element.setStyle({
-      position: 'absolute',
-      top:      top + 'px',
-      left:     left + 'px',
-      width:    width + 'px',
-      height:   height + 'px'
-    });
-
+    element.style.position = 'absolute';
+    element.style.top    = top + 'px';
+    element.style.left   = left + 'px';
+    element.style.width  = width + 'px';
+    element.style.height = height + 'px';
     return element;
   },
 
@@ -2156,32 +2061,11 @@ Element.Methods = {
     if (element.getStyle('position') == 'relative') return element;
     // Position.prepare(); // To be done manually by Scripty when it needs it.
 
-    if(!element._originalTop){
-      /* fix bizarre IE position issue with empty elements */
-      var isBuggy = element.outerHTML && element.innerHTML.blank();
-      if(isBuggy) element.innerHTML = '\x00';
-
-      Object.extend(element, {
-        _originalTop:    element.offsetTop,
-        _originalLeft:   element.offsetLeft,
-        _originalWidth:  element.clientWidth  + 'px',
-        _originalHeight: element.clientHeight + 'px'
-      });
-
-      if(isBuggy) element.innerHTML = '';
-    }
-
     element.style.position = 'relative';
+    var top  = parseFloat(element.style.top  || 0) - (element._originalTop || 0);
+    var left = parseFloat(element.style.left || 0) - (element._originalLeft || 0);
 
-    var offsets = element.positionedOffset(),
-    top  = element._originalTop  - offsets.top,
-    left = element._originalLeft - offsets.left;
-
-    var isAuto = /^(auto|)$/;
-    if(!isAuto.test(element.style.top))  top += element._originalTop;
-    if(!isAuto.test(element.style.left)) left+= element._originalLeft;
-
-    element.style.top    = top  + 'px';
+    element.style.top    = top + 'px';
     element.style.left   = left + 'px';
     element.style.height = element._originalHeight;
     element.style.width  = element._originalWidth;
@@ -2189,24 +2073,20 @@ Element.Methods = {
   },
 
   cumulativeScrollOffset: function(element) {
-    element = $(element);
-    var valueT = 0, valueL = 0,
-    endElement = (Prototype.Browser.Opera && opera.version() < 9.5) ? document.documentElement : document;
-
+    var valueT = 0, valueL = 0;
     do {
       valueT += element.scrollTop  || 0;
       valueL += element.scrollLeft || 0;
-    } while ((element = element.parentNode) && element != endElement);
-
+      element = element.parentNode;
+    } while (element);
     return Element._returnOffset(valueL, valueT);
   },
 
   getOffsetParent: function(element) {
-  	element = $(element);
-    var op = element.offsetParent;
-    if (op && op != document.documentElement) return $(op);
+    if (element.offsetParent) return $(element.offsetParent);
+    if (element == document.body) return $(element);
 
-    while ((element = element.parentNode) && element.tagName.toUpperCase() != 'HTML')
+    while ((element = element.parentNode) && element != document.body)
       if (Element.getStyle(element, 'position') != 'static')
         return $(element);
 
@@ -2214,31 +2094,31 @@ Element.Methods = {
   },
 
   viewportOffset: function(forElement) {
-    forElement = $(forElement);
+    var valueT = 0, valueL = 0;
 
-    var element = forElement, valueT = 0, valueL = 0,
-    endElement = (Prototype.Browser.Opera && opera.version() < 9.5) ? document.documentElement : document;
-
+    var element = forElement;
     do {
       valueT += element.offsetTop  || 0;
       valueL += element.offsetLeft || 0;
-    } while ((element = element.getOffsetParent()) != document.body);
+
+      // Safari fix
+      if (element.offsetParent == document.body &&
+        Element.getStyle(element, 'position') == 'absolute') break;
+
+    } while (element = element.offsetParent);
 
     element = forElement;
-
-    if (Element.getStyle(element, 'position') != 'fixed') {
-      while ((element = element.parentNode) && element != endElement) {
-        if (Element.getStyle(element, 'position') == 'fixed') break;
+    do {
+      if (!Prototype.Browser.Opera || (element.tagName && (element.tagName.toUpperCase() == 'BODY'))) {
         valueT -= element.scrollTop  || 0;
         valueL -= element.scrollLeft || 0;
       }
-    }
+    } while (element = element.parentNode);
 
     return Element._returnOffset(valueL, valueT);
   },
 
   clonePosition: function(element, source) {
-    element = $(element);
     var options = Object.extend({
       setLeft:    true,
       setTop:     true,
@@ -2253,6 +2133,7 @@ Element.Methods = {
     var p = source.viewportOffset();
 
     // find coordinate system to use
+    element = $(element);
     var delta = [0, 0];
     var parent = null;
     // delta [0,0] will do fine with position: fixed elements,
@@ -2291,26 +2172,8 @@ Element._attributeTranslations = {
       htmlFor:   'for'
     },
     values: { }
-  },
-
-  read: {
-    names: { },
-    values: {
-      _flag: function(element, attribute) {
-        return $(element).hasAttribute(attribute) ? attribute : null;
-      }
-    }
   }
 };
-
-(function(v) {
-  Object.extend(v, {
-    disabled: v._flag,
-    checked:  v._flag,
-    readonly: v._flag,
-    multiple: v._flag
-  });
-})(Element._attributeTranslations.read.values);
 
 if (Prototype.Browser.Opera) {
   Element.Methods.getStyle = Element.Methods.getStyle.wrap(
@@ -2349,7 +2212,7 @@ if (Prototype.Browser.Opera) {
 
   Element.Methods.readAttribute = Element.Methods.readAttribute.wrap(
     function(proceed, element, attribute) {
-      if (attribute === 'title') return $(element).title;
+      if (attribute === 'title') return element.title;
       return proceed(element, attribute);
     }
   );
@@ -2396,7 +2259,7 @@ else if (Prototype.Browser.IE) {
 
   Element.Methods.cumulativeOffset = Element.Methods.cumulativeOffset.wrap(
     function(proceed, element) {
-      try { $(element).offsetParent }
+      try { element.offsetParent }
       catch(e) { return Element._returnOffset(0,0) }
       return proceed(element);
     }
@@ -2443,72 +2306,71 @@ else if (Prototype.Browser.IE) {
     return element;
   };
 
-  (function(t) {
-    t.has = { };
-    t.write.names = { };
-
-    $w('cellPadding cellSpacing colSpan rowSpan vAlign dateTime accessKey ' +
-       'tabIndex encType maxLength readOnly longDesc frameBorder').each(function(attr) {
-      var lower = attr.toLowerCase();
-      t.has[lower] = attr;
-      t.read.names[lower] = attr;
-      t.write.names[lower] = attr;
-    });
-
-    [t.write.names, t.read.names].each(function(n) {
-      Object.extend(n, {
+  Element._attributeTranslations = {
+    read: {
+      names: {
         'class': 'className',
-        'for': 'htmlFor'
-      });
-    });
-  })(Element._attributeTranslations);
-
-  Object.extend(Element._attributeTranslations.read.values, {
-
-    _getAttr: function(element, attribute) {
-      return element.getAttribute(attribute, 2);
-    },
-
-    _getAttrNode: function(element, attribute) {
-      var node = element.getAttributeNode(attribute);
-      return node ? node.value : "";
-    },
-
-    _getEv: function(element, attribute) {
-      attribute = element.getAttribute(attribute);
-      return attribute ? attribute.toString().slice(23, -2) : null;
-    },
-
-    style: function(element) {
-      return element.style.cssText.toLowerCase();
-    },
-
-    title: function(element) {
-      return element.title;
+        'for':   'htmlFor'
+      },
+      values: {
+        _getAttr: function(element, attribute) {
+          return element.getAttribute(attribute, 2);
+        },
+        _getAttrNode: function(element, attribute) {
+          var node = element.getAttributeNode(attribute);
+          return node ? node.value : "";
+        },
+        _getEv: function(element, attribute) {
+          attribute = element.getAttribute(attribute);
+          return attribute ? attribute.toString().slice(23, -2) : null;
+        },
+        _flag: function(element, attribute) {
+          return $(element).hasAttribute(attribute) ? attribute : null;
+        },
+        style: function(element) {
+          return element.style.cssText.toLowerCase();
+        },
+        title: function(element) {
+          return element.title;
+        }
+      }
     }
-  });
+  };
 
-  Object.extend(Element._attributeTranslations.write.values, {
-    checked: function(element, value) {
-      element.checked = !!value;
-    },
+  Element._attributeTranslations.write = {
+    names: Object.extend({
+      cellpadding: 'cellPadding',
+      cellspacing: 'cellSpacing'
+    }, Element._attributeTranslations.read.names),
+    values: {
+      checked: function(element, value) {
+        element.checked = !!value;
+      },
 
-    encType: function(element, value) {
-      element.getAttributeNode('encType').value = value;
-    },
-
-    style: function(element, value) {
-      element.style.cssText = value ? value : '';
+      style: function(element, value) {
+        element.style.cssText = value ? value : '';
+      }
     }
+  };
+
+  Element._attributeTranslations.has = {};
+
+  $w('colSpan rowSpan vAlign dateTime accessKey tabIndex ' +
+      'encType maxLength readOnly longDesc frameBorder').each(function(attr) {
+    Element._attributeTranslations.write.names[attr.toLowerCase()] = attr;
+    Element._attributeTranslations.has[attr.toLowerCase()] = attr;
   });
 
   (function(v) {
-    delete v.readonly;
     Object.extend(v, {
       href:        v._getAttr,
       src:         v._getAttr,
       type:        v._getAttr,
       action:      v._getAttrNode,
+      disabled:    v._flag,
+      checked:     v._flag,
+      readonly:    v._flag,
+      multiple:    v._flag,
       onload:      v._getEv,
       onunload:    v._getEv,
       onclick:     v._getEv,
@@ -2526,11 +2388,7 @@ else if (Prototype.Browser.IE) {
       onsubmit:    v._getEv,
       onreset:     v._getEv,
       onselect:    v._getEv,
-      onchange:    v._getEv,
-      readOnly:    v._flag.wrap(function(proceed, element, attribute) {
-        attribute = proceed(element, attribute);
-        return attribute? 'readonly' : null;
-      })
+      onchange:    v._getEv
     });
   })(Element._attributeTranslations.read.values);
 }
@@ -2551,7 +2409,7 @@ else if (Prototype.Browser.WebKit) {
       (value < 0.00001) ? 0 : value;
 
     if (value == 1)
-      if (element.tagName.toUpperCase() == 'IMG' && element.width) {
+      if(element.tagName.toUpperCase() == 'IMG' && element.width) {
         element.width++; element.width--;
       } else try {
         var n = document.createTextNode(' ');
@@ -2566,7 +2424,6 @@ else if (Prototype.Browser.WebKit) {
   // positioned.  For performance reasons, redefine Element#cumulativeOffset for
   // KHTML/WebKit only.
   Element.Methods.cumulativeOffset = function(element) {
-    element = $(element);
     var valueT = 0, valueL = 0;
     do {
       valueT += element.offsetTop  || 0;
@@ -2602,17 +2459,6 @@ if (Prototype.Browser.IE || Prototype.Browser.Opera) {
     content.evalScripts.bind(content).defer();
     return element;
   };
-}
-
-if (Prototype.Browser.IE) {
-  // Wrap Element#update to clean up event handlers on
-  // newly-removed elements. Prevents memory leaks in IE.
-  Element.Methods.update = Element.Methods.update.wrap(
-    function(proceed, element, contents) {
-      Element.select(element, '*').each(Event.stopObserving);
-      return proceed(element, contents);
-    }
-  );
 }
 
 if ('outerHTML' in document.createElement('div')) {
@@ -2749,7 +2595,7 @@ Element.extend = (function() {
 })();
 
 Element.hasAttribute = function(element, attribute) {
-  if ((element = $(element)).hasAttribute) return element.hasAttribute(attribute);
+  if (element.hasAttribute) return element.hasAttribute(attribute);
   return Element.Methods.Simulated.hasAttribute(element, attribute);
 };
 
@@ -2760,7 +2606,6 @@ Element.addMethods = function(methods) {
     Object.extend(Form, Form.Methods);
     Object.extend(Form.Element, Form.Element.Methods);
     Object.extend(Element.Methods.ByTag, {
-      "BUTTON":   Object.clone(Form.Element.Methods),
       "FORM":     Object.clone(Form.Methods),
       "INPUT":    Object.clone(Form.Element.Methods),
       "SELECT":   Object.clone(Form.Element.Methods),
@@ -2846,8 +2691,15 @@ document.viewport = {
     var dimensions = { }, B = Prototype.Browser;
     $w('width height').each(function(d) {
       var D = d.capitalize();
-      dimensions[d] = (B.WebKit && !document.evaluate) ? self['inner' + D] :
-        (B.Opera && opera.version() < 9.5) ? document.body['client' + D] : document.documentElement['client' + D];
+      if (B.WebKit && !document.evaluate) {
+        // Safari <3.0 needs self.innerWidth/Height
+        dimensions[d] = self['inner' + D];
+      } else if (B.Opera && parseFloat(window.opera.version()) < 9.5) {
+        // Opera <9.5 needs document.body.clientWidth/Height
+        dimensions[d] = document.body['client' + D]
+      } else {
+        dimensions[d] = document.documentElement['client' + D];
+      }
     });
     return dimensions;
   },
@@ -3674,7 +3526,7 @@ Form.Methods = {
     }).sortBy(function(element) { return element.tabIndex }).first();
 
     return firstByIndex ? firstByIndex : elements.find(function(element) {
-      return ['button', 'input', 'select', 'textarea'].include(element.tagName.toLowerCase());
+      return ['input', 'select', 'textarea'].include(element.tagName.toLowerCase());
     });
   },
 
@@ -3732,15 +3584,15 @@ Form.Element.Methods = {
   },
 
   getValue: function(element) {
-    if (!(element = $(element))) return null;
-    var method = element.tagName.toLowerCase(), s = Form.Element.Serializers;
-    return s[method]? s[method](element) : null;
+    element = $(element);
+    var method = element.tagName.toLowerCase();
+    return Form.Element.Serializers[method](element);
   },
 
   setValue: function(element, value) {
-    if (!(element = $(element))) return null;
-    var method = element.tagName.toLowerCase(), s = Form.Element.Serializers;
-    if (s[method]) s[method](element, value);
+    element = $(element);
+    var method = element.tagName.toLowerCase();
+    Form.Element.Serializers[method](element, value);
     return element;
   },
 
@@ -3758,7 +3610,7 @@ Form.Element.Methods = {
     try {
       element.focus();
       if (element.select && (element.tagName.toLowerCase() != 'input' ||
-          !['button', 'image', 'reset', 'submit'].include(element.type)))
+          !['button', 'reset', 'submit'].include(element.type)))
         element.select();
     } catch (e) { }
     return element;
@@ -3800,32 +3652,27 @@ Form.Element.Serializers = {
     else element.checked = !!value;
   },
 
-  button: function(element, value){
-    if (Object.isUndefined(value)) return element.innerHTML;
-    else element.innerHTML = value;
-  },
-
   textarea: function(element, value) {
     if (Object.isUndefined(value)) return element.value;
     else element.value = value;
   },
 
-  select: function(element, index) {
-    if (Object.isUndefined(index))
+  select: function(element, value) {
+    if (Object.isUndefined(value))
       return this[element.type == 'select-one' ?
         'selectOne' : 'selectMany'](element);
     else {
-      var opt, value, single = !Object.isArray(index);
+      var opt, currentValue, single = !Object.isArray(value);
       for (var i = 0, length = element.length; i < length; i++) {
         opt = element.options[i];
-        value = this.optionValue(opt);
+        currentValue = this.optionValue(opt);
         if (single) {
-          if (value == index) {
+          if (currentValue == value) {
             opt.selected = true;
             return;
           }
         }
-        else opt.selected = index.include(value);
+        else opt.selected = value.include(currentValue);
       }
     }
   },
@@ -3997,19 +3844,22 @@ Event.Methods = (function() {
 
     element: function(event) {
       event = Event.extend(event);
-      var node = event.target, currentTarget = event.currentTarget, type = event.type;
+
+      var node          = event.target,
+          type          = event.type,
+          currentTarget = event.currentTarget;
 
       if (currentTarget && currentTarget.tagName) {
         // Firefox screws up the "click" event when moving between radio buttons
         // via arrow keys. It also screws up the "load" and "error" events on images,
         // reporting the document as the target instead of the original image.
-        if (['load', 'error'].include(type) ||
-         (currentTarget.tagName.toUpperCase() === "INPUT" && currentTarget.type === "radio" && type === "click"))
-          node = currentTarget;
+        if (type === 'load' || type === 'error' ||
+          (type === 'click' && currentTarget.tagName.toLowerCase() === 'input'
+            && currentTarget.type === 'radio'))
+              node = currentTarget;
       }
-
-      return Element.extend(node && node.nodeType == Node.TEXT_NODE ?
-       node.parentNode : node);
+      if (node.nodeType == Node.TEXT_NODE) node = node.parentNode;
+      return Element.extend(node);
     },
 
     findElement: function(event, expression) {
@@ -4061,13 +3911,13 @@ Event.extend = (function() {
       if (!event) return false;
       if (event._extendedByPrototype) return event;
 
+      event._extendedByPrototype = Prototype.emptyFunction;
       var pointer = Event.pointer(event);
       Object.extend(event, {
-        _extendedByPrototype: Prototype.emptyFunction,
-        target:        Element.extend(event.srcElement),
+        target: event.srcElement,
         relatedTarget: Event.relatedTarget(event),
-        pageX:         pointer.x,
-        pageY:         pointer.y
+        pageX:  pointer.x,
+        pageY:  pointer.y
       });
       return Object.extend(event, methods);
     };
@@ -4083,13 +3933,10 @@ Object.extend(Event, (function() {
   var cache = Event.cache;
 
   function getEventID(element) {
-    // Event ID is stored as the 0th index in a one-item array so that it
-    // won't get copied to a new node when cloneNode is called.
-    if (element === window) return 1;
     if (element._prototypeEventID) return element._prototypeEventID[0];
-    return element._prototypeEventID = [arguments.callee.id++];
+    arguments.callee.id = arguments.callee.id || 1;
+    return element._prototypeEventID = [++arguments.callee.id];
   }
-  getEventID.id = 2;
 
   function getDOMEventName(eventName) {
     if (eventName && eventName.include(':')) return "dataavailable";
@@ -4100,118 +3947,59 @@ Object.extend(Event, (function() {
     return cache[id] = cache[id] || { };
   }
 
-  function addEventDispatcher(element, eventName, dispatchWrapper) {
-    var id = getEventID(element), wrappers = getWrappersForEventName(id, eventName);
-    if (wrappers.dispatcher) return;
-
-    wrappers.dispatcher = function(event) {
-      var w = getWrappersForEventName(id, eventName);
-      for(var i = 0, l = w.length; i < l; i++) w[i](event); // execute wrappers
-    };
-
-    if (dispatchWrapper) wrappers.dispatcher = wrappers.dispatcher.wrap(dispatchWrapper);
-    element.attachEvent("on" + getDOMEventName(eventName), wrappers.dispatcher);
-  }
-
   function getWrappersForEventName(id, eventName) {
     var c = getCacheForID(id);
     return c[eventName] = c[eventName] || [];
   }
 
   function createWrapper(element, eventName, handler) {
-    var id = getEventID(element), c = getCacheForID(id);
-
-    // Attach the element itself onto its cache entry so we can retrieve it for
-    // cleanup on page unload.
-    if (!c.element) c.element = element;
-
-    var w = getWrappersForEventName(id, eventName);
-    if (w.pluck("handler").include(handler)) return false;
+    var id = getEventID(element);
+    var c = getWrappersForEventName(id, eventName);
+    if (c.pluck("handler").include(handler)) return false;
 
     var wrapper = function(event) {
       if (!Event || !Event.extend ||
         (event.eventName && event.eventName != eventName))
           return false;
 
-      handler.call(element, Event.extend(event));
+      Event.extend(event);
+      handler.call(element, event);
     };
 
     wrapper.handler = handler;
-    w.push(wrapper);
+    c.push(wrapper);
     return wrapper;
   }
 
   function findWrapper(id, eventName, handler) {
-    var w = getWrappersForEventName(id, eventName);
-    return w.find(function(wrapper) { return wrapper.handler == handler });
+    var c = getWrappersForEventName(id, eventName);
+    return c.find(function(wrapper) { return wrapper.handler == handler });
   }
 
   function destroyWrapper(id, eventName, handler) {
     var c = getCacheForID(id);
     if (!c[eventName]) return false;
-    var d = c[eventName].dispatcher;
     c[eventName] = c[eventName].without(findWrapper(id, eventName, handler));
-    c[eventName].dispatcher = d;
   }
 
-  // Loop through all elements and remove all handlers on page unload. IE
-  // needs this in order to prevent memory leaks.
-  function purgeListeners() {
-    var element, entry;
-    for (var i in Event.cache) {
-      entry = Event.cache[i];
-      Event.stopObserving(entry.element);
-      entry.element = null;
-    }
+  function destroyCache() {
+    for (var id in cache)
+      for (var eventName in cache[id])
+        cache[id][eventName] = null;
   }
 
-  function onStop() {
-    document.detachEvent("onstop", onStop);
-    purgeListeners();
-  }
 
-  function onBeforeUnload() {
-    if (document.readyState === "interactive") {
-      document.attachEvent("onstop", onStop);
-      (function() { document.detachEvent("onstop", onStop); }).defer();
-    }
-  }
-
-  if (window.attachEvent && !window.addEventListener) {
-    // Internet Explorer needs to remove event handlers on page unload
-    // in order to avoid memory leaks.
-    window.attachEvent("onunload", purgeListeners);
-
-    // IE also doesn't fire the unload event if the page is navigated away
-    // from before it's done loading. Workaround adapted from
-    // http://blog.moxiecode.com/2008/04/08/unload-event-never-fires-in-ie/.
-    window.attachEvent("onbeforeunload", onBeforeUnload);
-
-    // Ensure window onload is fired after "dom:loaded"
-    addEventDispatcher(window, 'load', function(proceed, event) {
-    	if (document.loaded) {
-    	  proceed(event);
-    	} else {
-    	  arguments.callee.defer(proceed, event);
-    	}
-    });
-
-    // Ensure window onresize is fired only once per resize
-    addEventDispatcher(window, 'resize', function(proceed, event) {
-      var callee = arguments.callee, dimensions = document.viewport.getDimensions();
-      if (dimensions.width != callee.prevWidth || dimensions.height != callee.prevHeight) {
-        callee.prevWidth  = dimensions.width;
-        callee.prevHeight = dimensions.height;
-        proceed(event);
-      }
-    });
+  // Internet Explorer needs to remove event handlers on page unload
+  // in order to avoid memory leaks.
+  if (window.attachEvent) {
+    window.attachEvent("onunload", destroyCache);
   }
 
   // Safari has a dummy event handler on page unload so that it won't
   // use its bfcache. Safari <= 3.1 has an issue with restoring the "document"
   // object when page is returned to via the back button using its bfcache.
-  else if (Prototype.Browser.WebKit) {
-    window.addEventListener("unload", Prototype.emptyFunction, false);
+  if (Prototype.Browser.WebKit) {
+    window.addEventListener('unload', Prototype.emptyFunction, false);
   }
 
   return {
@@ -4225,7 +4013,7 @@ Object.extend(Event, (function() {
       if (element.addEventListener) {
         element.addEventListener(name, wrapper, false);
       } else {
-        addEventDispatcher(element, eventName);
+        element.attachEvent("on" + name, wrapper);
       }
 
       return element;
@@ -4233,21 +4021,17 @@ Object.extend(Event, (function() {
 
     stopObserving: function(element, eventName, handler) {
       element = $(element);
-      eventName = Object.isString(eventName) ? eventName : null;
-      var id = getEventID(element), c = cache[id];
+      var id = getEventID(element), name = getDOMEventName(eventName);
 
-      if (!c) {
-        return element;
-      }
-      else if (!handler && eventName) {
+      if (!handler && eventName) {
         getWrappersForEventName(id, eventName).each(function(wrapper) {
-          Event.stopObserving(element, eventName, wrapper.handler);
+          element.stopObserving(eventName, wrapper.handler);
         });
         return element;
-      }
-      else if (!eventName) {
-        Object.keys(c).without("element").each(function(eventName) {
-          Event.stopObserving(element, eventName);
+
+      } else if (!eventName) {
+        Object.keys(getCacheForID(id)).each(function(eventName) {
+          element.stopObserving(eventName);
         });
         return element;
       }
@@ -4255,18 +4039,13 @@ Object.extend(Event, (function() {
       var wrapper = findWrapper(id, eventName, handler);
       if (!wrapper) return element;
 
-      var name = getDOMEventName(eventName);
       if (element.removeEventListener) {
         element.removeEventListener(name, wrapper, false);
-        destroyWrapper(id, eventName, handler);
       } else {
-        destroyWrapper(id, eventName, handler);
-        var wrappers = getWrappersForEventName(id, eventName);
-        if (!wrappers.length) {
-          element.detachEvent("on" + name, wrappers.dispatcher);
-          wrappers.dispatcher = null;
-        }
+        element.detachEvent("on" + name, wrapper);
       }
+
+      destroyWrapper(id, eventName, handler);
 
       return element;
     },
@@ -4316,47 +4095,40 @@ Object.extend(document, {
 
 (function() {
   /* Support for the DOMContentLoaded event is based on work by Dan Webb,
-     Matthias Miller, Dean Edwards, John Resig and Diego Perini. */
+     Matthias Miller, Dean Edwards and John Resig. */
 
   var timer;
 
   function fireContentLoadedEvent() {
     if (document.loaded) return;
     if (timer) window.clearInterval(timer);
-    document.loaded = true;
     document.fire("dom:loaded");
+    document.loaded = true;
   }
 
   if (document.addEventListener) {
-    document.addEventListener("DOMContentLoaded", fireContentLoadedEvent, false);
+    if (Prototype.Browser.WebKit) {
+      timer = window.setInterval(function() {
+        if (/loaded|complete/.test(document.readyState))
+          fireContentLoadedEvent();
+      }, 0);
+
+      Event.observe(window, "load", fireContentLoadedEvent);
+
+    } else {
+      document.addEventListener("DOMContentLoaded",
+        fireContentLoadedEvent, false);
+    }
+
   } else {
-    document.attachEvent("onreadystatechange", function() {
-      if (document.readyState == "complete") {
-        document.detachEvent("onreadystatechange", arguments.callee);
+    document.write("<script id=__onDOMContentLoaded defer src=//:><\/script>");
+    $("__onDOMContentLoaded").onreadystatechange = function() {
+      if (this.readyState == "complete") {
+        this.onreadystatechange = null;
         fireContentLoadedEvent();
       }
-    });
-
-    if (window == top) {
-      timer = setInterval(function() {
-        try {
-          document.documentElement.doScroll("left");
-        } catch(e) { return }
-        fireContentLoadedEvent();
-      }, 10);
-    }
+    };
   }
-
-  // WebKit builds lower than 525.13 don't support DOMContentLoaded
-  if (Prototype.Browser.WebKit && (navigator.userAgent.match(/AppleWebKit\/(\d+)/)[1] < 525)) {
-    timer = setInterval(function() {
-      if (/loaded|complete/.test(document.readyState))
-        fireContentLoadedEvent();
-    }, 10);
-  }
-
-  // Worst case fallback...
-  Event.observe(window, "load", fireContentLoadedEvent);
 })();
 /*------------------------------- DEPRECATED -------------------------------*/
 
