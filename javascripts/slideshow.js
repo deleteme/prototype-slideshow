@@ -233,8 +233,8 @@ var SlideShow = Class.create({
     this.end();
     this.root.remove();
     this.fireEvent('removed');
-    // window['slideShow'] = null;
   }
+  
   /*,
   setupPausedTest: function(){
     this.schedulePausedTest = function(ev){
