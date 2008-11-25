@@ -1,4 +1,4 @@
-var __debug = false;
+var __debug = true;
 /*
 
 
@@ -19,6 +19,7 @@ EXAMPLE USAGE:
   TODO add a way to delete or remove a slideShow
 */
 var SlideShow = Class.create({
+  
   initialize: function(element, options){
     this.element = element;
     this.options = options;
@@ -52,6 +53,7 @@ var SlideShow = Class.create({
       document.observe(this.events.init, this.initEventFunction);
     }
   },
+  
   init: function(){
     if (!$(this.element)) return;
     this.root = $(this.element);
@@ -80,6 +82,7 @@ var SlideShow = Class.create({
     
     this.fireEvent('initialized', { slideShow: this });
   },
+  
   prep: function(){
     this.root.makePositioned();
     
@@ -90,9 +93,11 @@ var SlideShow = Class.create({
     };
     this.fireEvent('prepped', { slideShow: this });
   },
+  
   prepSlide: function(slide){
     return slide.setStyle({ display: 'none', opacity: 0 });
   },
+  
   play: function(e){
     // test 1: autoPlay true,  pauseOnMouseover true
     // test 2: autoPlay false, pauseOnMouseover true,  (manually starting)
@@ -111,6 +116,7 @@ var SlideShow = Class.create({
     this.fireEvent('started', { slideShow: this });
     this.transition();
   },
+  
   pause: function(e){
     // if it's not started playing, or if it's already paused ,or if the mouse isn't within the slide area return
     if (!this.started || this.paused || !this.mouseIsWithinSlideArea(e)) return;
@@ -123,6 +129,7 @@ var SlideShow = Class.create({
     
     this.fireEvent('paused', { slideShow: this });
   },
+  
   transition: function(){
     if (this.paused) return;
     if (this.nextTransition) this.nextTransition.stop();
@@ -179,9 +186,11 @@ var SlideShow = Class.create({
     }
     this.fireEvent('transitioned', { slideShow: this, coming: coming, going: going, loopCount: this.loopCount });
   },
+  
   afterTransitionEffect: function(){
     this.scheduleNextTransition();
   },
+  
   scheduleNextTransition: function(){
     if (this.slideDuration <= 0) return;
     this.nextTransition = new PeriodicalExecuter(function(nextTransition){
@@ -189,15 +198,18 @@ var SlideShow = Class.create({
       this.transition();
     }.bind(this), this.slideDuration);
   },
+  
   abortNextTransition: function(){
     if (this.nextTransition) {
       this.nextTransition.stop();
     }
   },
+  
   fireEvent: function(name, memo){
     cl('SlideShow_' + this.root.id + ':' + name);
     this.root.fire('SlideShow_' + this.root.id + ':' + name, memo);
   },
+  
   mouseIsWithinSlideArea: function(e){
     var maxX = this.root.cumulativeOffset().left + this.root.getWidth();
     var minX = this.root.cumulativeOffset().left;
@@ -209,11 +221,13 @@ var SlideShow = Class.create({
     if ($R(minX, maxX).include(e.pointerX()) && $R(minY, maxY).include(e.pointerY())) {
       return true; } else { return false; }
   },
+  
   end: function(){
     this.abortNextTransition();
     document.stopObserving(this.events.play, this.playEventFunction);
     document.stopObserving(this.events.init, this.initEventFunction);
   },
+  
   remove: function(){
     this.end();
     this.root.remove();
