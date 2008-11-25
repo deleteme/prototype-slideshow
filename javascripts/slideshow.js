@@ -88,8 +88,8 @@ var SlideShow = Class.create({
     
     for (var i=0; i < this.slides.length; i++) {
       this.slides[i].setStyle({ position: 'absolute', zIndex: i });
-      if (this.startHidden) this.prepSlide(this.slides[i]);
-      if (!this.startHidden && i != 0) this.prepSlide(this.slides[i]);
+      if (this.startHidden || (!this.startHidden && i != 0))
+        this.prepSlide(this.slides[i]);
     };
     this.fireEvent('prepped', { slideShow: this });
   },
