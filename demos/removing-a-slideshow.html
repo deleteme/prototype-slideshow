@@ -14,13 +14,20 @@
   
   <script src="../javascripts/slideshow.js" type="text/javascript"></script>
   <script type="text/javascript">
+    
     var slideShow = new SlideShow('listOfImages', {
-      slideDuration: .5,
-      loop: true,
-      afterFinish: function(){
-        slideShow.remove();
-      }
+      slideDuration: 1,
+      transitionDuration: 1
     });
+    
+    document.observe('dom:loaded', function(){
+      $('remove').observe('click', function(e){
+        slideShow.remove();
+        e.element().blur();
+        e.stop();
+      });
+    });
+    
   </script>
   <link rel="stylesheet" href="../stylesheets/codehighlighter.css" type="text/css" media="screen" />
   <link rel="stylesheet" href="../stylesheets/layout.css" type="text/css" media="screen" />
@@ -74,6 +81,8 @@
       <li><img src="../images/yellow-bird.jpg" alt="yellow bird" /></li>
       <li><img src="../images/green-frog.jpg" alt="green frog" /></li>
     </ul>
+    
+    <a href="#remove" id="remove">Remove SlideShow</a>
     
   </div>
   

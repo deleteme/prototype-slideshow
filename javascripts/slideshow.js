@@ -118,8 +118,8 @@ var SlideShow = Class.create({
   },
   
   pause: function(e){
-    // if it's not started playing, or if it's already paused ,or if the mouse isn't within the slide area return
-    if (!this.started || this.paused || !this.mouseIsWithinSlideArea(e)) return;
+    // if it's not started playing, or if it's already paused, or if the mouse isn't within the slide area return
+    if (!this.started || this.paused || (e && !this.mouseIsWithinSlideArea(e))) return;
     
     this.paused = true;
     this.abortNextTransition();
@@ -223,7 +223,7 @@ var SlideShow = Class.create({
   },
   
   end: function(){
-    this.abortNextTransition();
+    this.pause();
     document.stopObserving(this.events.play, this.playEventFunction);
     document.stopObserving(this.events.init, this.initEventFunction);
   },
@@ -231,6 +231,8 @@ var SlideShow = Class.create({
   remove: function(){
     this.end();
     this.root.remove();
+    this.fireEvent('removed');
+    // window['slideShow'] = null;
   }
   /*,
   setupPausedTest: function(){
