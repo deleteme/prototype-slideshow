@@ -29,7 +29,7 @@
       // setup DOM
       [$('sequenceOfImages'), $('description'), $('startButton')].invoke('hide');
       var frames = $A();
-      var frameTemplate = new Template('<img src="http://dl.getdropbox.com/u/154684/food/dinner#{number}.jpg" />');
+      var frameTemplate = new Template('<img src="http://homepage.mac.com/mattgarrett/dinner/dinner#{number}.jpg" />');
       $R(0, 144).each(function(n){
         var blockSize = 4;
         var leadingZeros = blockSize - n.toString().length;
@@ -125,7 +125,7 @@ document.observe(&#x27;dom:loaded&#x27;, function(){
   // setup DOM
   [$(&#x27;sequenceOfImages&#x27;), $(&#x27;description&#x27;), $(&#x27;startButton&#x27;)].invoke(&#x27;hide&#x27;);
   var frames = $A();
-  var frameTemplate = new Template(&#x27;&lt;img src=&quot;http://dl.getdropbox.com/u/154684/food/dinner#{number}.jpg&quot; /&gt;&#x27;);
+  var frameTemplate = new Template(&#x27;&lt;img src=&quot;http://homepage.mac.com/mattgarrett/dinner/dinner#{number}.jpg&quot; /&gt;&#x27;);
   $R(0, 144).each(function(n){
     var blockSize = 4;
     var leadingZeros = blockSize - n.toString().length;
