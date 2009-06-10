@@ -278,7 +278,10 @@ var SlideShowWithControls = Class.create(SlideShow, {
 
 
 /*
+  
   sketching out the ideal flow of events for the lazyloaded slideshow
+  
+    * how to deal with images that already exist in the dom as part of the slideshow?
   
   dom:loaded
     slideshow:initialized
@@ -289,8 +292,13 @@ var SlideShowWithControls = Class.create(SlideShow, {
   firstpicture:loaded
   slideshow:play
     firstpicture:shown
-  secondpicture:loaded
+  thirdpicture:inserted
   
+  loading                       shown
+  2                             
+  3                             2
+  4                             
+  5                             3
   
 */
 
