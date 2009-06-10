@@ -22,7 +22,7 @@ var SlideShow = Class.create({
   
   initialize: function(element, options){
     this.element = element;
-    this.options = options;
+    this.suppliedOptions = options;
     this.defaultOptions = $H({
       autoPlay: true,
       slideDuration: 5,
@@ -37,7 +37,7 @@ var SlideShow = Class.create({
     });
     
     // assigning the options to internal variables
-    this.defaultOptions.merge(this.options).each(function(option){
+    this.options = this.defaultOptions.merge(this.suppliedOptions).each(function(option){
       this[option[0]] = option[1];
     }.bind(this));
     
@@ -55,6 +55,7 @@ var SlideShow = Class.create({
   },
   
   init: function(){
+    console.log('init from base class');
     if (!$(this.element)) return;
     this.root = $(this.element);
     this.id = this.root.identify();
@@ -274,6 +275,86 @@ var SlideShowWithControls = Class.create(SlideShow, {
   }
 });
 */
+
+
+var LazyLoadedSlideShow = Class.create(SlideShow, {
+  
+  initialize: function($super, element, suppliedOptions){
+    this.$super = $super;
+    this.element = $(element);
+    this.suppliedOptions = suppliedOptions;
+    this.forcedOptions = $H({
+      autoPlay: true,
+      slidesSelector: ' img',
+      pauseOnMouseover: false,
+      startHidden: true,
+      events: { init: 'dom:loaded', play: 'firstImage:loaded' },
+      beforeStart: Prototype.emptyFunction, afterFinish: Prototype.emptyFunction
+    });
+    this.defaultOptions = $H({
+      imagePaths: []
+    });
+    this.count = 0;
+
+    // assigning the options to internal variables
+    this.options = this.defaultOptions.merge(suppliedOptions).update(this.forcedOptions).each(function(option){
+      console.log(option);
+      this[option[0]] = option[1];
+    }.bind(this));
+    
+    // create an array to store which images have been loaded
+    this.loadedImages = new Array(this.imagePaths.length);
+    for (var i=0; i < this.loadedImages.length; i++) {
+      this.loadedImages[i] = false;
+    };
+    
+    if (this.imagePaths.length == 0) return;
+    
+    this.$super(this.element, this.options);
+    // this.init();
+  },
+  
+  init: function(){
+    console.log('init from child class');
+    this.insertImage();
+  },
+  
+  insertImage: function(){
+    if (this.count >= this.imagePaths.length) return;
+    console.log(this.element);
+
+    this.element.insert(
+      new Element('img', { src: this.imagePaths[this.count], style: 'display: none; opacity: 0;' })
+    );
+    this.element.select('img').last().observe('load', this.imageLoaded.bind(this));
+  },
+  
+  imageLoaded: function(e){
+    console.log('imageLoaded: ' + this.count);
+
+    if (this.count == 0) {
+      e.element().appear();
+      document.fire('firstImage:loaded');
+    } else {
+      this.element.select('img')[this.count - 1].hide();
+      e.element().show().setStyle('opacity: 1');
+    }
+    
+    this.updateInternalObjects();
+    this.insertImage();
+  },
+  
+  updateInternalObjects: function(){
+    if (this.count == 0) $('loading').remove();
+    this.loadedImages[this.count] = true;
+    this.count++;
+  }
+  
+});
+
+
+
+
 
 
 Event.observe(window, 'load', function(e){

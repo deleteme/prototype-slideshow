@@ -43,72 +43,7 @@
       'http://farm4.static.flickr.com/3107/2680342845_a62668b4d6_o.gif'
     ];
     
-    var DeferredLoader = Class.create(SlideShow, {
-      
-      initialize: function(loader, options){
-        
-        this.loader = $(loader);
-        this.defaultOptions = $H({
-          imagePaths: []
-        });
-        this.count = 0;
-
-        // assigning the options to internal variables
-        this.defaultOptions.merge(options).each(function(option){
-          this[option[0]] = option[1];
-        }.bind(this));
-        
-        // create an array to store which images have been loaded
-        this.loadedImages = new Array(this.imagePaths.length);
-        for (var i=0; i < this.loadedImages.length; i++) {
-          this.loadedImages[i] = false;
-        };
-        
-        if (!this.loader || this.imagePaths.length == 0) return;
-        
-        this.go();
-        
-      },
-      
-      go: function(){
-        this.loader.setStyle({ height: document.viewport.getHeight() + 'px' });
-        this.insertImage();
-      },
-      
-      insertImage: function(i){
-        if (this.count >= this.imagePaths.length) return;
-        console.time(this.imagePaths[this.count]);
-        this.loader.insert(
-          new Element('img', { src: this.imagePaths[this.count], style: 'display: none; opacity: 0;' })
-        );
-        this.loader.select('img').last().observe('load', this.imageLoaded.bind(this));
-      },
-      
-      imageLoaded: function(e){
-        // console.log('imageLoaded: ' + this.count);
-        console.timeEnd(this.imagePaths[this.count]);
-        if (this.count == 0) {
-          e.element().appear();
-        } else {
-          this.loader.select('img')[this.count - 1].hide();
-          e.element().show().setStyle('opacity: 1');
-        }
-        
-        this.updateInternalObjects();
-        this.insertImage();
-      },
-      
-      updateInternalObjects: function(){
-        if (this.count == 0) $('loading').remove();
-        this.loadedImages[this.count] = true;
-        this.count++;
-      }
-      
-    });
-    
-    document.observe('dom:loaded', function(){
-      var myDeferredLoader = new DeferredLoader('shell', { imagePaths: images });
-    });
+    var myLazyLoadedSlideShow = new LazyLoadedSlideShow('shell', { imagePaths: images });
     
   </script>
   
