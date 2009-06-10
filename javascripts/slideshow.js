@@ -277,6 +277,24 @@ var SlideShowWithControls = Class.create(SlideShow, {
 */
 
 
+/*
+  sketching out the ideal flow of events for the lazyloaded slideshow
+  
+  dom:loaded
+    slideshow:initialized
+  window:loaded
+  
+  firstpicture:inserted
+  secondpicture:inserted
+  firstpicture:loaded
+  slideshow:play
+    firstpicture:shown
+  secondpicture:loaded
+  
+  
+*/
+
+
 var LazyLoadedSlideShow = Class.create(SlideShow, {
   
   initialize: function($super, element, suppliedOptions){
@@ -295,7 +313,7 @@ var LazyLoadedSlideShow = Class.create(SlideShow, {
       imagePaths: []
     });
     this.count = 0;
-
+    
     // assigning the options to internal variables
     this.options = this.defaultOptions.merge(suppliedOptions).update(this.forcedOptions).each(function(option){
       console.log(option);
@@ -310,19 +328,23 @@ var LazyLoadedSlideShow = Class.create(SlideShow, {
     
     if (this.imagePaths.length == 0) return;
     
+    console.log(this);
+    console.log(this.element);
     this.$super(this.element, this.options);
     // this.init();
   },
   
   init: function(){
     console.log('init from child class');
+    console.log(this);
+    console.log(this.element);
     this.insertImage();
   },
   
   insertImage: function(){
     if (this.count >= this.imagePaths.length) return;
     console.log(this.element);
-
+    
     this.element.insert(
       new Element('img', { src: this.imagePaths[this.count], style: 'display: none; opacity: 0;' })
     );
@@ -331,7 +353,7 @@ var LazyLoadedSlideShow = Class.create(SlideShow, {
   
   imageLoaded: function(e){
     console.log('imageLoaded: ' + this.count);
-
+    
     if (this.count == 0) {
       e.element().appear();
       document.fire('firstImage:loaded');
@@ -345,6 +367,9 @@ var LazyLoadedSlideShow = Class.create(SlideShow, {
   },
   
   updateInternalObjects: function(){
+    /*
+      TODO remove hard coded reference to a '#loading' element
+    */
     if (this.count == 0) $('loading').remove();
     this.loadedImages[this.count] = true;
     this.count++;
