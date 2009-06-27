@@ -216,23 +216,7 @@ var SlideShow = Class.create({
     this.root.remove();
     this.fireEvent('removed');
   }
-  
-  /*,
-  setupPausedTest: function(){
-    this.schedulePausedTest = function(ev){
-      this.pausedTest = new PeriodicalExecuter(function(pe){
-        cl('pausedTest: { paused(' + this.paused + '), !this.mouseIsWithinSlideArea(ev): ' + !this.mouseIsWithinSlideArea(ev));
-        if (this.paused && !this.mouseIsWithinSlideArea(ev)) {
-          cl('force play');
-          this.play();
-        }
-        this.pausedTest.stop();
-        this.root.stopObserving('mousemove', this.schedulePausedTest);
-      }.bind(this), .2);
-    }.bind(this);
-    this.root.observe('mousemove', this.schedulePausedTest);
-  }
-  */
+
 });
 
 
