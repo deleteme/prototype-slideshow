@@ -34,6 +34,14 @@ Every SlideShow is different. The class provides plenty of options, allowing eve
 
 h2. Custom Events
 
+The SlideShow class exposes when certain things happen internally by firing custom events.
+
 |_.SlideShow Custom Event Name|_.Description|_.Event Memo|
-|id + ':initialized'|Fired when the class initializes.|Contains a reference to the accordion instance.|
-|id + ':clicked'|Fired when a section title is clicked.|Contains a reference to the accordion instance.|
+|id + ':initializing'|Fired when the class begins initializing.|Contains a reference to the SlideShow instance.|
+|id + ':initialized'|Fired when the class is done initializing.|Contains a reference to the SlideShow instance.|
+|id + ':prepped'|Fired when the SlideShow has prepped the DOM with any styling.|Contains a reference to the SlideShow instance.|
+|id + ':started'|Fired when the SlideShow starts playing. This occurs at the beginning and after playback resumes after being paused.|Contains a reference to the SlideShow instance.|
+|id + ':paused'|Fired when the SlideShow is paused.|Contains a reference to the SlideShow instance.|
+|id + ':looped'|Fired when the SlideShow has looped at the end of a sequence.|Contains a reference to the SlideShow instance.|
+|id + ':transitioned'|Fired when a slide has finished appearing from a transition.|Contains a reference to the SlideShow instance.|
+|id + ':removed'|Fired when a SlideShow class is removed.|Contains a reference to the SlideShow instance.|
