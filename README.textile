@@ -4,12 +4,20 @@ h1. Prototype SlideShow
 
 "View the Prototype SlideShow demo":http://homepage.mac.com/mattgarrett/prototype-slideshow/
 
-h2. Dependencies
+h2. Usage
+
+The Prototype SlideShow class is dependent on Prototype and Scriptaculous effect.js.
 
 * "Prototype":http://www.prototypejs.org
 * "Scriptaculous Effects.js":http://script.aculo.us/
 
-h2. Usage
+To get started, put prototype.js and effects.js in a folder of your site, link them and slideshow.js in the &lt;head&gt; of your HTML document.
+
+<pre code="html">
+  &lt;script type=&quot;text/javascript&quot; src=&quot;/javascripts/prototype.js&quot; /&gt;
+  &lt;script type=&quot;text/javascript&quot; src=&quot;/javascripts/effects.js&quot; /&gt;
+  &lt;script type=&quot;text/javascript&quot; src=&quot;/javascripts/slideshow.js&quot; /&gt;
+</pre>
 
 <pre code="javascript">
 new SlideShow('listOfImages');
