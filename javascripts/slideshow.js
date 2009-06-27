@@ -255,27 +255,6 @@ var SlideShow = Class.create({
 });
 
 
-/*
-  
-  controls
-    previous, next, play, pause, toggle
-    numericals?
-    keyboard shortcuts?
-
-*/
-/*
-var SlideShowWithControls = Class.create(SlideShow, {
-  initialize: function($super, element, controls, options){
-    this.$super = $super;
-    this.element = element;
-    this.controls = controls;
-    this.options = options;
-    this.$super(this.element, this.options);
-    // cl($super);
-  }
-});
-*/
-
 
 
 
