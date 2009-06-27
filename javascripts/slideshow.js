@@ -221,11 +221,6 @@ var SlideShow = Class.create({
 
 
 
-
-
-
-
-
 Event.observe(window, 'load', function(e){
   document.fire('window:loaded');
 });
