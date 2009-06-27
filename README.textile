@@ -1,1 +1,27 @@
 *This is a work in progress. It is in a volatile state right now.*
+
+h1. Prototype SlideShow
+
+"View the Prototype SlideShow demo":http://homepage.mac.com/mattgarrett/prototype-slideshow/
+
+h2. Dependencies
+
+* "Prototype":http://www.prototypejs.org
+* "Scriptaculous Effects.js":http://script.aculo.us/
+
+h2. Usage
+
+<pre code="javascript">
+new SlideShow('listOfImages');
+</pre>
+
+h2. Options
+
+|_.Option|_.Type|_.Default Value|_.Description|
+|cancelEvent|Boolean|true|When the title element is clicked, if this option is set to true, will cancel the event, therefore preventing the anchor to load a new page or modify the address bar.|
+
+h2. Custom Events
+
+|_.Accordion Custom Event Name|_.Description|_.Event Memo|
+|id + ':initialized'|Fired when the class initializes.|Contains a reference to the accordion instance.|
+|id + ':clicked'|Fired when a section title is clicked.|Contains a reference to the accordion instance.|
