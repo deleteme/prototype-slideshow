@@ -18,10 +18,20 @@ new SlideShow('listOfImages');
 h2. Options
 
 |_.Option|_.Type|_.Default Value|_.Description|
-|cancelEvent|Boolean|true|When the title element is clicked, if this option is set to true, will cancel the event, therefore preventing the anchor to load a new page or modify the address bar.|
+|autoPlay|Boolean|true|When true, the SlideShow will automatically start looping over the slides.|
+|slideDuration|Number|5|The number of seconds that an individual slide will be visible.|
+|transitionDuration|Number|The number of seconds that a transition from one slide to another will occur.|
+|loop|Boolean|true|When true, the SlideShow will start over from the first slide when it is done displaying the last slide.|
+|crossFade|Boolean|false|When true, the SlideShow's transition will simultaneously fade out a slide while fading in the next. This uses Effect.Parallel. If set to false, the next slide will wait for the previous one finish fading before appearing.|
+|pauseOnMouseover|Boolean|true|When true, if the mouse cursor hovers over the SlideShow area, the SlideShow will pause. Playback will resume upon mouseout.|
+|slidesSelector|String|'> *'|A CSS selector that matches the intended slide elements. By default, selects the immediate descendants of the root SlideShow element.|
+|startHidden|Boolean|true|When true, at start of the SlideShow's playback, the first slide will appear from a hidden state.|
+|events|Object|{ init: 'dom:loaded', play: 'window:loaded' }|An object containing two properties, *init* and *play*. Init is the when event observers are attached. Play is when the SlideShow will attempt to automatically start playing if autoPlay is set. By default, these settings will allow for a SlideShow that is part of the original document to work. If a SlideShow is created after the original document is loaded, as is often the case with AJAX, custom events may be used to start a slideshow.|
+|beforeStart|Function|Prototype.emptyFunction|Allows for a function to be executed prior to the initial playback.|
+|afterFinish|Function|Prototype.emptyFunction|Allows for a function to be executed after a loop as completed.|
 
 h2. Custom Events
 
-|_.Accordion Custom Event Name|_.Description|_.Event Memo|
+|_.SlideShow Custom Event Name|_.Description|_.Event Memo|
 |id + ':initialized'|Fired when the class initializes.|Contains a reference to the accordion instance.|
 |id + ':clicked'|Fired when a section title is clicked.|Contains a reference to the accordion instance.|
