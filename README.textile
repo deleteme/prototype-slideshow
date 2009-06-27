@@ -1,6 +1,6 @@
 h1. Prototype SlideShow
 
-A JavaScript Prototype Class that takes a sequence of images or HTML elements and turns them into a Slide Show. "View the Prototype SlideShow demo":http://homepage.mac.com/mattgarrett/prototype-slideshow/
+A JavaScript Prototype Class that takes a sequence of images or HTML elements and turns them into a Slide Show. "View the Prototype SlideShow demo":http://homepage.mac.com/mattgarrett/prototype-slideshow/.
 
 h2. Usage
 
