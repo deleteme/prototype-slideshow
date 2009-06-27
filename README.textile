@@ -1,5 +1,3 @@
-*This is a work in progress. It is in a volatile state right now.*
-
 h1. Prototype SlideShow
 
 "View the Prototype SlideShow demo":http://homepage.mac.com/mattgarrett/prototype-slideshow/
