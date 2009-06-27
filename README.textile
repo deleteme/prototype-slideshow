@@ -14,9 +14,9 @@ The Prototype SlideShow class is dependent on Prototype and Scriptaculous effect
 To get started, put prototype.js and effects.js in a folder of your site, link them and slideshow.js in the &lt;head&gt; of your HTML document.
 
 <pre code="html">
-  <script type="text/javascript" src="/javascripts/prototype.js" />
-  <script type="text/javascript" src="/javascripts/effects.js" />
-  <script type="text/javascript" src="/javascripts/slideshow.js" />
+<script type="text/javascript" src="/javascripts/prototype.js" />
+<script type="text/javascript" src="/javascripts/effects.js" />
+<script type="text/javascript" src="/javascripts/slideshow.js" />
 </pre>
 
 <pre code="javascript">
