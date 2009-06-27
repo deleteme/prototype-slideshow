@@ -9,7 +9,7 @@ The Prototype SlideShow class is dependent on Prototype and Scriptaculous effect
 * "Prototype":http://www.prototypejs.org
 * "Scriptaculous Effects.js":http://script.aculo.us/
 
-To get started, put prototype.js and effects.js in a folder of your site, link them and slideshow.js in the &lt;head&gt; of your HTML document.
+To get started, put prototype.js and effects.js in a folder of your site, add them and slideshow.js in the &lt;head&gt; of your HTML document.
 
 <pre code="html">
 <script type="text/javascript" src="/javascripts/prototype.js" />
@@ -49,5 +49,7 @@ The SlideShow class exposes when certain things happen internally by firing cust
 |id + ':started'|Fired when the SlideShow starts playing. This occurs at the beginning and after playback resumes after being paused.|Contains a reference to the SlideShow instance.|
 |id + ':paused'|Fired when the SlideShow is paused.|Contains a reference to the SlideShow instance.|
 |id + ':looped'|Fired when the SlideShow has looped at the end of a sequence.|Contains a reference to the SlideShow instance.|
-|id + ':transitioned'|Fired when a slide has finished appearing from a transition.|Contains a reference to the SlideShow instance.|
+|id + ':transitioned'|Fired when a slide has finished appearing from a transition.|Contains a reference to the SlideShow instance, the slide that faded, the slide that appeared, and the current loopCount.|
 |id + ':removed'|Fired when a SlideShow class is removed.|Contains a reference to the SlideShow instance.|
+
+{ slideShow: this, coming: coming, going: going, loopCount: this.loopCount }
