@@ -9,15 +9,6 @@ EXAMPLE USAGE:
   new SlideShow('container', { slideDuration: 2 });
 
 */
-/*
-  TODO add an option so that the first slide starts visible, instead of fading in
-*/
-/*
-  TODO pauseOnMouseover doesn't respect the slideDuration
-*/
-/*
-  TODO add a way to delete or remove a slideShow
-*/
 var SlideShow = Class.create({
   
   initialize: function(element, options){
@@ -55,7 +46,6 @@ var SlideShow = Class.create({
   },
   
   init: function(){
-    console.log('init from base class');
     if (!$(this.element)) return;
     this.root = $(this.element);
     this.id = this.root.identify();
@@ -100,15 +90,9 @@ var SlideShow = Class.create({
   },
   
   play: function(e){
-    // test 1: autoPlay true,  pauseOnMouseover true
-    // test 2: autoPlay false, pauseOnMouseover true,  (manually starting)
-    // test 3: autoPlay true,  pauseOnMouseover false
-    // test 4: autoPlay false, pauseOnMouseover false, (manually starting)
-    
     // prevent mousing out from causing the slideShow to start
     if (e && !this.autoPlay && this.pauseOnMouseover && this.loopCount == 0) return;
     
-    // if (this.paused) return;
     // prevent against internal mouse movements from triggering a transition
     if (e && this.mouseIsWithinSlideArea(e)) return;
     
@@ -138,7 +122,8 @@ var SlideShow = Class.create({
     this.coming = this.slides[this.slideIndex];
     this.going = this.coming.previous() || this.slides.last();
     
-    var coming = this.coming; var going = this.going;
+    var coming = this.coming;
+    var going = this.going;
     
     if (this.slideCount > 0 && this.coming == this.slides.first() && this.going == this.slides.last()) {
       this.fireEvent('looped', { slideShow: this });
@@ -153,7 +138,6 @@ var SlideShow = Class.create({
     
     // if not fresh start, fade
     if (going != coming) {
-      // if crossfade
       if (this.crossFade) {
         new Effect.Parallel(
           [new Effect.Appear(coming), new Effect.Fade(going)],
@@ -201,13 +185,10 @@ var SlideShow = Class.create({
   },
   
   abortNextTransition: function(){
-    if (this.nextTransition) {
-      this.nextTransition.stop();
-    }
+    if (this.nextTransition) this.nextTransition.stop();
   },
   
   fireEvent: function(name, memo){
-    cl('SlideShow_' + this.root.id + ':' + name);
     this.root.fire('SlideShow_' + this.root.id + ':' + name, memo);
   },
   
@@ -218,7 +199,7 @@ var SlideShow = Class.create({
     var maxY = offsets.top + this.root.getHeight();
     var minY = offsets.top;
     
-    // for whatever reason the minX and the maxY need to be checked like this
+    // minX and the maxY need to be checked like this
     if (minX == e.pointerX() || maxY == e.pointerY()) return false;
     if ($R(minX, maxX).include(e.pointerX()) && $R(minY, maxY).include(e.pointerY())) {
       return true; } else { return false; }
