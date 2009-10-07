@@ -4,7 +4,7 @@ A JavaScript Prototype Class that takes a sequence of images or HTML elements an
 
 h2. Usage
 
-The Prototype SlideShow class is dependent on Prototype and Scriptaculous effect.js.
+The Prototype SlideShow class is dependent on Prototype > 1.6 and Scriptaculous effect.js.
 
 * "Prototype":http://www.prototypejs.org
 * "Scriptaculous Effects.js":http://script.aculo.us/
