@@ -15,14 +15,14 @@ var SlideShow = Class.create({
     this.element = element;
     this.suppliedOptions = options;
     this.defaultOptions = $H({
-      autoPlay: true,
-      slideDuration: 5,
+      autoPlay:           true,
+      slideDuration:      5,
       transitionDuration: 1,
-      loop: true,
-      crossFade: false,
-      pauseOnMouseover: false,
-      slidesSelector: '> *',
-      startHidden: true,
+      loop:               true,
+      crossFade:          false,
+      pauseOnMouseover:   false,
+      slidesSelector:     '> *',
+      startHidden:        true,
       events: { init: 'dom:loaded', play: 'window:loaded' },
       beforeStart: Prototype.emptyFunction, afterFinish: Prototype.emptyFunction
     });
