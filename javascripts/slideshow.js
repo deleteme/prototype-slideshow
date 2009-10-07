@@ -20,7 +20,7 @@ var SlideShow = Class.create({
       transitionDuration: 1,
       loop: true,
       crossFade: false,
-      pauseOnMouseover: true,
+      pauseOnMouseover: false,
       slidesSelector: '> *',
       startHidden: true,
       events: { init: 'dom:loaded', play: 'window:loaded' },
