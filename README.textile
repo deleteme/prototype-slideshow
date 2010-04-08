@@ -43,14 +43,17 @@ Every SlideShow is different. The class provides plenty of options, allowing eve
 
 h2. Custom Events
 
-The SlideShow class exposes when certain things happen internally by firing custom events. The custom events are named to be unique to each SlideShow and are based off of the root element id. So with an id of 'myslideshow', an example event name would be 'myslideshow:started'.
+The SlideShow class exposes when certain things happen internally by firing
+custom events. The custom events are named to be unique to each SlideShow and
+are based off of the root element id. So with an id of 'myslideshow', an
+example event name would be 'SlideShow_myslideshow:started'.
 
 |_.SlideShow Custom Event Name|_.Description|_.Event Memo|
-|id + ':initializing'|Fired when the class begins initializing.|Contains a reference to the SlideShow instance.|
-|id + ':initialized'|Fired when the class is done initializing.|Contains a reference to the SlideShow instance.|
-|id + ':prepped'|Fired when the SlideShow has prepped the DOM with any styling.|Contains a reference to the SlideShow instance.|
-|id + ':started'|Fired when the SlideShow starts playing. This occurs at the beginning and after playback resumes after being paused.|Contains a reference to the SlideShow instance.|
-|id + ':paused'|Fired when the SlideShow is paused.|Contains a reference to the SlideShow instance.|
-|id + ':looped'|Fired when the SlideShow has looped at the end of a sequence.|Contains a reference to the SlideShow instance.|
-|id + ':transitioned'|Fired when a slide has finished appearing from a transition.|Contains a reference to the SlideShow instance, the slide that faded, the slide that appeared, and the current loopCount.|
-|id + ':removed'|Fired when a SlideShow class is removed.|Contains a reference to the SlideShow instance.|
+|'SlideShow_' + id + ':initializing'|Fired when the class begins initializing.|Contains a reference to the SlideShow instance.|
+|'SlideShow_' + id + ':initialized'|Fired when the class is done initializing.|Contains a reference to the SlideShow instance.|
+|'SlideShow_' + id + ':prepped'|Fired when the SlideShow has prepped the DOM with any styling.|Contains a reference to the SlideShow instance.|
+|'SlideShow_' + id + ':started'|Fired when the SlideShow starts playing. This occurs at the beginning and after playback resumes after being paused.|Contains a reference to the SlideShow instance.|
+|'SlideShow_' + id + ':paused'|Fired when the SlideShow is paused.|Contains a reference to the SlideShow instance.|
+|'SlideShow_' + id + ':looped'|Fired when the SlideShow has looped at the end of a sequence.|Contains a reference to the SlideShow instance.|
+|'SlideShow_' + id + ':transitioned'|Fired when a slide has finished appearing from a transition.|Contains a reference to the SlideShow instance, the slide that faded, the slide that appeared, and the current loopCount.|
+|'SlideShow_' + id + ':removed'|Fired when a SlideShow class is removed.|Contains a reference to the SlideShow instance.|
