@@ -43,10 +43,7 @@ Every SlideShow is different. The class provides plenty of options, allowing eve
 
 h2. Custom Events
 
-The SlideShow class exposes when certain things happen internally by firing
-custom events. The custom events are named to be unique to each SlideShow and
-are based off of the root element id. So with an id of 'myslideshow', an
-example event name would be 'SlideShow_myslideshow:started'.
+The SlideShow class exposes when certain things happen internally by firing custom events. The custom events are named to be unique to each SlideShow and are based off of the root element id. So with an id of 'myslideshow', an example event name would be 'SlideShow_myslideshow:started'.
 
 |_.SlideShow Custom Event Name|_.Description|_.Event Memo|
 |'SlideShow_' + id + ':initializing'|Fired when the class begins initializing.|Contains a reference to the SlideShow instance.|
